@@ -12,7 +12,7 @@ function App() {
     <Router>
       <Navbar />
       <div className="flex bg-slate-50 h-[calc(92.2vh)]">
-        <Sidebar className='h-full'/>
+        <Sidebar className='h-full hidden sm:grid'/>
         {/* <Routes> */}
           <Dashboard className='h-full'/>
         {/* </Routes> */}

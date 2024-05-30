@@ -73,7 +73,7 @@ const UploadGallery = () => {
           <CardDescription>Select any image to modify</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-5">
             {imageUrls.map((url, index) => (
               <img
                 key={index}

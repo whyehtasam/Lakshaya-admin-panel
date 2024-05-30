@@ -5,7 +5,7 @@ import UpdateAnnouncemenet from "./UpdateAnnouncemenet";
 
 const Dashboard = ({className}) => {
   return (
-    <div className={`dashboard basis-4/5 py-5 pr-5 ${className}`}>
+    <div className={`dashboard w-full sm:basis-4/5 sm:py-5 sm:pr-5 p-0 ${className}`}>
       <Routes>
         <Route path="/" element={<UploadGallery />} />
         <Route path="/updateAnnouncement" element={<UpdateAnnouncemenet/>} />
