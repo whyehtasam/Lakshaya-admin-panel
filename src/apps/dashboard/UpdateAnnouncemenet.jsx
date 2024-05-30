@@ -46,8 +46,8 @@ const UpdateAnnouncement = () => {
   ];
 
   return (
-    <div>
-      <Card>
+    <div className="h-full">
+      <Card className='h-full overflow-auto'>
         <CardHeader>
           <CardTitle>Update Notice Announcement</CardTitle>
           <CardDescription>

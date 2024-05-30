@@ -11,10 +11,10 @@ function App() {
   return (
     <Router>
       <Navbar />
-      <div className="flex bg-slate-50">
-        <Sidebar />
+      <div className="flex bg-slate-50 h-[calc(92.2vh)]">
+        <Sidebar className='h-full'/>
         {/* <Routes> */}
-          <Dashboard />
+          <Dashboard className='h-full'/>
         {/* </Routes> */}
       </div>
     </Router>

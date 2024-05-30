@@ -43,8 +43,8 @@ const UploadGallery = () => {
   ];
 
   return (
-    <div className="">
-      <Card>
+    <div className="h-full">
+      <Card className='h-full overflow-auto'>
         <CardHeader>
           <CardTitle>Upload Image</CardTitle>
           <CardDescription>Select an image to upload</CardDescription>
@@ -73,7 +73,7 @@ const UploadGallery = () => {
           <CardDescription>Select any image to modify</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-5">
             {imageUrls.map((url, index) => (
               <img
                 key={index}
