@@ -8,7 +8,7 @@ const Sidebar = ({ className }) => {
   const buttons = [
     { name: 'Update Gallery', path: '/' },
     { name: 'Update Announcement', path: '/updateAnnouncement' },
-    { name: 'Update Results', path: '#' },
+    { name: 'Update Results', path: '/updateResult' },
     { name: 'Update Testimonials', path: '#' },
     { name: 'Update Batches', path: '#' },
     { name: 'Update Course Details', path: '#' },

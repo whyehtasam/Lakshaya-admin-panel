@@ -2,6 +2,7 @@ import React from "react";
 import UploadGallery from "./UploadGallery";
 import { Route, Routes } from "react-router-dom";
 import UpdateAnnouncemenet from "./UpdateAnnouncemenet";
+import UpdateResult from "./UpdateResult";
 
 const Dashboard = ({className}) => {
   return (
@@ -9,6 +10,7 @@ const Dashboard = ({className}) => {
       <Routes>
         <Route path="/" element={<UploadGallery />} />
         <Route path="/updateAnnouncement" element={<UpdateAnnouncemenet/>} />
+        <Route path="/updateResult" element={<UpdateResult/>} />
       </Routes>
     </div>
   );
