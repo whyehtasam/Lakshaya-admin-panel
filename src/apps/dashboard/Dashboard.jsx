@@ -4,6 +4,8 @@ import { Route, Routes } from "react-router-dom";
 import UpdateAnnouncemenet from "./UpdateAnnouncemenet";
 import UpdateResult from "./UpdateResult";
 import UpdateTestimonials from "./UpdateTestimonials";
+import UpdateBatch from "./UpdateBatch";
+import UpdateCourse from "./UpdateCourse";
 
 const Dashboard = ({className}) => {
   return (
@@ -13,6 +15,8 @@ const Dashboard = ({className}) => {
         <Route path="/updateAnnouncement" element={<UpdateAnnouncemenet/>} />
         <Route path="/updateResult" element={<UpdateResult/>} />
         <Route path="/updateTestimonials" element={<UpdateTestimonials/>} />
+        <Route path="/updateBatch" element={<UpdateBatch/>} />
+        <Route path="/updateCourse" element={<UpdateCourse/>} />
       </Routes>
     </div>
   );

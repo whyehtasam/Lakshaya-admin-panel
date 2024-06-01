@@ -10,8 +10,8 @@ const Sidebar = ({ className }) => {
     { name: 'Update Announcement', path: '/updateAnnouncement' },
     { name: 'Update Results', path: '/updateResult' },
     { name: 'Update Testimonials', path: '/updateTestimonials' },
-    { name: 'Update Batches', path: '#' },
-    { name: 'Update Course Details', path: '#' },
+    { name: 'Update Batches', path: '/updateBatch' },
+    { name: 'Update Course Details', path: '/updateCourse' },
   ];
 
   return (
