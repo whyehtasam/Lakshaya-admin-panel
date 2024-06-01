@@ -38,12 +38,12 @@ const UpdateCourse = () => {
           <CardDescription>Enter the course details</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="gap-3 grid grid-cols-2">
+          <form onSubmit={handleSubmit} className="gap-3 grid  sm:grid-cols-2">
             <Input name="courseName" placeholder="Course Name" />
             <Input name="duration" placeholder="Duration" />
             <Input name="fee" placeholder="Fee" />
             <Input name="description" placeholder="Description" />
-            <Textarea className='col-span-2' name="syllabus" placeholder="Syllabus" />
+            <Textarea className='sm:col-span-2' name="syllabus" placeholder="Syllabus" />
             <Button type="submit" className='w-fit'>Submit</Button>
           </form>
         </CardContent>

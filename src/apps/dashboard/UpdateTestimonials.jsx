@@ -37,7 +37,7 @@ const UpdateTestimonials = () => {
           <CardDescription>Enter the testimonials details</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="gap-3 grid grid-cols-2">
+          <form onSubmit={handleSubmit} className="gap-3 grid sm:grid-cols-2">
             <Input name="name" placeholder="Name" />
             <Input name="designation" placeholder="Designation" />
             <Input name="description" placeholder="Description" />

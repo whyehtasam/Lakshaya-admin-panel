@@ -54,7 +54,7 @@ const UpdateResult = () => {
           <CardDescription>Enter the result details</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="gap-3 grid grid-cols-2">
+          <form onSubmit={handleSubmit} className="gap-3 grid sm:grid-cols-2">
             <Input
               name="name"
               value={formData.name}

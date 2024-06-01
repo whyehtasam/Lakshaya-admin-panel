@@ -37,7 +37,7 @@ const UpdateBatch = () => {
           <CardDescription>Enter the batch details</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="gap-3 grid grid-cols-2">
+          <form onSubmit={handleSubmit} className="gap-3 grid sm:grid-cols-2">
             <Input name="batchName" placeholder="Batch Name" />
             <Input name="class" placeholder="Class" />
             <Input name="targetYear" placeholder="Target Year" />
