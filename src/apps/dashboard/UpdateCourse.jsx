@@ -71,7 +71,7 @@ const UpdateCourse = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className='text-center'>No data found</TableCell>
+                  <TableCell colSpan={5}  className='text-sm text-muted-foreground text-center'>No data found</TableCell>
                 </TableRow>
               )}
             </TableBody>

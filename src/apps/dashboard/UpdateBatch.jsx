@@ -67,7 +67,7 @@ const UpdateBatch = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4}>No batches found</TableCell>
+                  <TableCell colSpan={4} className='text-sm text-muted-foreground text-center'>No batches found</TableCell>
                 </TableRow>
               )}
             </TableBody>

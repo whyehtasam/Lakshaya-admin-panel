@@ -69,7 +69,7 @@ const UpdateTestimonials = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4}>No testimonials found</TableCell>
+                  <TableCell colSpan={4} className='text-sm text-muted-foreground text-center'>No testimonials found</TableCell>
                 </TableRow>
               )}
             </TableBody>

@@ -131,7 +131,7 @@ const UpdateResult = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-sm text-muted-foreground">No results found</TableCell>
+                  <TableCell colSpan={6} className="text-sm text-muted-foreground text-center">No results found</TableCell>
                 </TableRow>
               )}
             </TableBody>
