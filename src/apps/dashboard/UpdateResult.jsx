@@ -61,6 +61,12 @@ const UpdateResult = () => {
               onChange={handleChange}
               placeholder="Name"
             />
+              <Input
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Description"
+              />
             <Input
               name="exam"
               value={formData.exam}
@@ -72,12 +78,6 @@ const UpdateResult = () => {
               value={formData.examYear}
               onChange={handleChange}
               placeholder="Exam Year"
-            />
-            <Input
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Description"
             />
             <Input
               name="rank"
