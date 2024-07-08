@@ -2,30 +2,67 @@ import React, { useState } from "react";
 import axios from "axios";
 import {
   Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Input,
-  Label,
-} from "@/components/ui";
+  // Card,
+  // CardContent,
+  // CardDescription,
+  // CardFooter,
+  // CardHeader,
+  // CardTitle,
+  // Input,
+  // Label,
+} from "@/components/ui/button";
+
+import {
+  // Button,
+  Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent
+  // CardContent,
+  // CardDescription,
+  // CardFooter,
+  // CardHeader,
+  // CardTitle,
+  // Input,
+  // Label,
+} from "@/components/ui/card";
+
+
+import {
+  // Button,
+  // Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent
+  // CardContent,
+  // CardDescription,
+  // CardFooter,
+  // CardHeader,
+  // CardTitle,
+  // Input,
+  Label
+} from "@/components/ui/label";
+import {
+  // Button,
+  // Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent
+  // CardContent,
+  // CardDescription,
+  // CardFooter,
+  // CardHeader,
+  // CardTitle,
+  Input
+} from "@/components/ui/input";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
+  const [adminid, setadminid] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    const backend_url = import.meta.env.VITE_BACKEND_URL;
     try {
-      const response = await axios.post("/api/login", { email, password });
+      const response = await axios.post(backend_url+"/api/admin/signin", { adminid, password ,passcode:password});
       const { token } = response.data;
       localStorage.setItem("token", token); // Store the token
       // Redirect or do something upon successful login
+      window.location.reload();
     } catch (error) {
       console.error("Login failed:", error.response.data);
-      // Handle login error (e.g., show an error message)
+      
     }
   };
 
@@ -35,19 +72,19 @@ export default function LoginForm() {
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account.
+            Enter your adminid below to login to your account.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="adminid">adminid</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
+              id="adminid"
+              type="text"
+              placeholder=""
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={adminid}
+              onChange={(e) => setadminid(e.target.value)}
             />
           </div>
           <div className="grid gap-2">

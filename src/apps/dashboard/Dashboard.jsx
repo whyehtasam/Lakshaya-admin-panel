@@ -8,6 +8,7 @@ import UpdateBatch from "./UpdateBatch";
 import UpdateCourse from "./UpdateCourse";
 
 const Dashboard = ({className}) => {
+  
   return (
     <div className={`dashboard w-full sm:basis-4/5 sm:py-5 sm:pr-5 p-0 ${className}`}>
       <Routes>

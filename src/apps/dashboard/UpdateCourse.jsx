@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -21,13 +21,44 @@ import { Textarea } from "@/components/ui/textarea";
 
 const UpdateCourse = () => {
   const [courses, setCourses] = useState([]);
+  const backend_url=import.meta.env.VITE_BACKEND_URL;
+  const [course_name,setCourseName]=useState("");
+  const [description,setDescription]=useState("");
+  const [duration,setDuration]=useState("");
+  const [fee,setFee]=useState("");
+  const [syllabus,setSyllabus]=useState("");
+  const cardDesc=useRef(null);
+  
+  
+  
+  useEffect(()=>{
+    const backend_url=import.meta.env.VITE_BACKEND_URL;
+    const token=localStorage.getItem('token');
+    fetch(backend_url+'/api/course/get',{
+      headers:{
+        'Authorization':'Bearer '+token
+      }
+    }).then(res=>res.json()).then(data=>setCourses(data)).catch(e=>console.log(e));
 
-  const handleSubmit = (e) => {
+  },[])
+
+
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const course = Object.fromEntries(formData.entries());
-    setCourses([...courses, course]);
-    e.target.reset();
+
+    const token=localStorage.getItem('token');
+    const res=await fetch(backend_url+'/api/course/add',{
+      method:'POST',
+      headers:{
+        'Authorization':'Bearer '+token
+      },
+      body:JSON.stringify({course_name,fee,duration,description,syllabus})
+    });
+
+    if(res.status==200 || res.status==201){
+      if(cardDesc.current) cardDesc.current.textContent="course updated successfully"
+    }
+
   };
 
   return (
@@ -35,15 +66,15 @@ const UpdateCourse = () => {
       <Card className='h-full overflow-auto'>
         <CardHeader>
           <CardTitle>Update Course Details</CardTitle>
-          <CardDescription>Enter the course details</CardDescription>
+          <CardDescription ref={cardDesc}>Enter the course details</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="gap-3 grid  sm:grid-cols-2">
-            <Input name="courseName" placeholder="Course Name" />
-            <Input name="duration" placeholder="Duration" />
-            <Input name="fee" placeholder="Fee" />
-            <Input name="description" placeholder="Description" />
-            <Textarea className='sm:col-span-2' name="syllabus" placeholder="Syllabus" />
+            <Input name="courseName" placeholder="Course Name" onChange={(e)=>setCourseName(e.target.value)} />
+            <Input name="duration" placeholder="Duration"  onChange={(e)=>setDuration(e.target.value)}/>
+            <Input name="fee" placeholder="Fee"  onChange={(e)=>setFee(e.target.value)}/>
+            <Input name="description" placeholder="Description"  onChange={(e)=>setDescription(e.target.value)} />
+            <Textarea className='sm:col-span-2' name="syllabus" placeholder="Syllabus" onChange={(e)=>setSyllabus(e.target.value)}/>
             <Button type="submit" className='w-fit'>Submit</Button>
           </form>
         </CardContent>
@@ -62,7 +93,7 @@ const UpdateCourse = () => {
               {courses.length > 0 ? (
                 courses.map((course, index) => (
                   <TableRow key={index}>
-                    <TableCell>{course.courseName}</TableCell>
+                    <TableCell>{course.course_name}</TableCell>
                     <TableCell>{course.duration}</TableCell>
                     <TableCell>{course.fee}</TableCell>
                     <TableCell>{course.description}</TableCell>
