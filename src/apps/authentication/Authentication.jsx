@@ -77,11 +77,11 @@ export default function LoginForm() {
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="adminid">adminid</Label>
+            <Label htmlFor="adminid">Username</Label>
             <Input
               id="adminid"
               type="text"
-              placeholder=""
+              placeholder="admin@gmail.com"
               required
               value={adminid}
               onChange={(e) => setadminid(e.target.value)}
@@ -93,7 +93,7 @@ export default function LoginForm() {
               id="password"
               type="password"
               required
-              placeholder="password123"
+              placeholder="Admin123.."
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
