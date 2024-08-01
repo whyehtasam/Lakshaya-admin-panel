@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -20,29 +20,88 @@ import {
 
 const UpdateBatch = () => {
   const [batches, setBatches] = useState([]);
+  const [batchData, setBatchData] = useState({
+    batchName: "",
+    class: "",
+    targetYear: "",
+    fee: ""
+  });
+
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
+  const token = localStorage.getItem("token");
+
+  // Function to fetch batches from the API
+  const fetchBatches = () => {
+    fetch(backend_url + "/api/batches/get", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setBatches(data.reverse())) // Reverse the order to show latest first
+      .catch((e) => console.log(e));
+  };
+
+  // Fetch batches on component mount
+  useEffect(() => {
+    fetchBatches();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setBatchData(prevData => ({ ...prevData, [name]: value }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const batch = Object.fromEntries(formData.entries());
-    setBatches([...batches, batch]);
-    e.target.reset();
+
+    const payload = {
+      batch_name: batchData.batchName,
+      class: batchData.class,
+      target_year: batchData.targetYear,
+      fee: batchData.fee,
+    };
+
+    fetch(backend_url + "/api/batches/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Batch added successfully");
+          fetchBatches(); // Fetch batches immediately after submission
+        } else {
+          console.error("Batch addition failed");
+        }
+      })
+      .catch((e) => console.log(e));
+
+    setBatchData({
+      batchName: "",
+      class: "",
+      targetYear: "",
+      fee: ""
+    });
   };
 
   return (
     <div className="h-full">
-    <Card className='h-full overflow-auto'>
+      <Card className="h-full overflow-auto">
         <CardHeader>
           <CardTitle>Update Batch</CardTitle>
           <CardDescription>Enter the batch details</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="gap-3 grid sm:grid-cols-2">
-            <Input name="batchName" placeholder="Batch Name" />
-            <Input name="class" placeholder="Class" />
-            <Input name="targetYear" placeholder="Target Year" />
-            <Input name="fee" placeholder="Fee" />
-            <Button type="submit" className='w-fit'>Submit</Button>
+            <Input name="batchName" value={batchData.batchName} onChange={handleChange} placeholder="Batch Name" />
+            <Input name="class" value={batchData.class} onChange={handleChange} placeholder="Class" />
+            <Input name="targetYear" value={batchData.targetYear} onChange={handleChange} placeholder="Year" />
+            <Input name="fee" value={batchData.fee} onChange={handleChange} placeholder="Fee" />
+            <Button type="submit" className="w-fit">Submit</Button>
           </form>
         </CardContent>
         <CardFooter>
@@ -59,15 +118,17 @@ const UpdateBatch = () => {
               {batches.length > 0 ? (
                 batches.map((batch, index) => (
                   <TableRow key={index}>
-                    <TableCell>{batch.batchName}</TableCell>
+                    <TableCell>{batch.batch_name}</TableCell>
                     <TableCell>{batch.class}</TableCell>
-                    <TableCell>{batch.targetYear}</TableCell>
+                    <TableCell>{batch.target_year}</TableCell>
                     <TableCell>{batch.fee}</TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className='text-sm text-muted-foreground text-center'>No batches found</TableCell>
+                  <TableCell colSpan={4} className="text-sm text-muted-foreground text-center">
+                    No batches found
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>

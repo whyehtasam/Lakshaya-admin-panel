@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -21,13 +21,33 @@ import {
 const UpdateResult = () => {
   const [formData, setFormData] = useState({
     name: "",
+    description: "",
     exam: "",
     examYear: "",
-    description: "",
     rank: "",
     img: "",
   });
   const [results, setResults] = useState([]);
+
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
+  const token = localStorage.getItem("token");
+
+  // Function to fetch results from the API
+  const fetchResults = () => {
+    fetch(backend_url + "/api/result/get", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setResults(data.reverse())) // Reverse the order to show latest first
+      .catch((e) => console.log(e));
+  };
+
+  // Fetch results on component mount
+  useEffect(() => {
+    fetchResults();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,12 +55,39 @@ const UpdateResult = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setResults([...results, formData]);
+
+    const payload = {
+      name: formData.name,
+      description: formData.description,
+      exam: formData.exam,
+      exam_year: formData.examYear,
+      rank: formData.rank,
+      image_url: formData.img,
+    };
+
+    fetch(backend_url + "/api/result/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Result updated successfully");
+          fetchResults(); // Fetch results immediately after submission
+        } else {
+          console.error("Result update failed");
+        }
+      })
+      .catch((e) => console.log(e));
+
     setFormData({
       name: "",
+      description: "",
       exam: "",
       examYear: "",
-      description: "",
       rank: "",
       img: "",
     });
@@ -48,7 +95,7 @@ const UpdateResult = () => {
 
   return (
     <div className="h-full">
-    <Card className='h-full overflow-auto'>
+      <Card className="h-full overflow-auto">
         <CardHeader>
           <CardTitle>Update Result</CardTitle>
           <CardDescription>Enter the result details</CardDescription>
@@ -61,12 +108,12 @@ const UpdateResult = () => {
               onChange={handleChange}
               placeholder="Name"
             />
-              <Input
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Description"
-              />
+            <Input
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Description"
+            />
             <Input
               name="exam"
               value={formData.exam}
@@ -91,7 +138,9 @@ const UpdateResult = () => {
               onChange={handleChange}
               placeholder="Image URL"
             />
-            <Button type="submit" className='w-fit'>Update</Button>
+            <Button type="submit" className="w-fit">
+              Update
+            </Button>
           </form>
         </CardContent>
         <CardFooter className="flex-col items-start space-y-2 mt-5">
@@ -116,12 +165,12 @@ const UpdateResult = () => {
                   <TableRow key={index}>
                     <TableCell>{result.name}</TableCell>
                     <TableCell>{result.exam}</TableCell>
-                    <TableCell>{result.examYear}</TableCell>
+                    <TableCell>{result.exam_year}</TableCell>
                     <TableCell>{result.description}</TableCell>
                     <TableCell>{result.rank}</TableCell>
                     <TableCell>
                       <img
-                        src={result.img}
+                        src={result.image_url}
                         alt={result.name}
                         width="50"
                         height="50"
@@ -131,7 +180,12 @@ const UpdateResult = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-sm text-muted-foreground text-center">No results found</TableCell>
+                  <TableCell
+                    colSpan={6}
+                    className="text-sm text-muted-foreground text-center"
+                  >
+                    No results found
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
