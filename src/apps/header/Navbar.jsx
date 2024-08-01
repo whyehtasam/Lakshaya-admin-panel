@@ -1,8 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DrawerDemo  from "../sidebar/Drawer";
-
+import { BrowserRouter as Router } from 'react-router-dom';
 const Navbar = () => {
   return (
+    <Router>
     <nav className="px-5 h-14 bg-slate-100 flex justify-between items-center">
       <div
        
@@ -30,6 +31,7 @@ const Navbar = () => {
         </Avatar> */}
       </div>
     </nav>
+    </Router>
   );
 };
 
