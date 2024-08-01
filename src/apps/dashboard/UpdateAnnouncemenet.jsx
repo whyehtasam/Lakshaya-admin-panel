@@ -1,4 +1,4 @@
-import React, { useRef,useState,useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,50 +18,54 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 const UpdateAnnouncement = () => {
-  const titleInput = useRef();
-  const descriptionInput = useRef();
-  const cardHeader=useRef();
-  const [accordionData, setAccordianData] = useState([]);
-
-  useEffect(()=>{
-    const backend_url=import.meta.env.VITE_BACKEND_URL;
-    const token=localStorage.getItem('token');
-    fetch(backend_url+'/api/announcement/get',{
-      headers:{
-        'Authorization':'Bearer '+token
+  const titleInput = useRef(null);
+  const descriptionInput = useRef(null);
+  const cardHeader = useRef(null);
+  const [accordionData, setAccordionData] = useState([]);
+  
+  const fetchAnnouncements = () => {
+    const backend_url = import.meta.env.VITE_BACKEND_URL;
+    const token = localStorage.getItem('token');
+    fetch(backend_url + '/api/announcement/get', {
+      headers: {
+        'Authorization': 'Bearer ' + token
       }
-    }).then(res=>res.json()).then(data=>setAccordianData(data)).catch(e=>console.log(e));
+    })
+    .then(res => res.json())
+    .then(data => setAccordionData(data))
+    .catch(e => console.log(e));
+  }
 
-  },[])
+  useEffect(() => {
+    fetchAnnouncements();
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const backend_url = import.meta.env.VITE_BACKEND_URL;
     const title = titleInput.current.value;
     const description = descriptionInput.current.value;
-    const token=localStorage.getItem('token');
-    const response = await fetch(backend_url+'/api/announcement/add', {
+    const token = localStorage.getItem('token');
+    
+    const response = await fetch(backend_url + '/api/announcement/add', {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",
-        'Authorization':'Bearer '+token, //make sure there's space between Bearer and token
-       },
+        'Authorization': 'Bearer ' + token,
+      },
       body: JSON.stringify({ title, description }),
     });
 
     if (response.ok) {
       console.log("Announcement updated successfully");
-      if(cardHeader.current) cardHeader.current.textContent="Announcement updated successfully";
-      
+      if (cardHeader.current) cardHeader.current.textContent = "Announcement updated successfully";
+      titleInput.current.value = "";
+      descriptionInput.current.value = "";
+      fetchAnnouncements(); // Fetch announcements immediately after submission
     } else {
       console.error("Announcement update failed");
     }
   };
-
-  // const accordionData = [
-  //   { title: "Title 1", content: "Content 1" },
-  //   { title: "Title 2", content: "Content 2" },
-  // ];
 
   return (
     <div className="h-full">
