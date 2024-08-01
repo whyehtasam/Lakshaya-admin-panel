@@ -24,10 +24,10 @@ const Navbar = () => {
         The Lakshaya
       </div>
       <div>
-        <Avatar className="cursor-pointer">
+        {/* <Avatar className="cursor-pointer">
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        </Avatar> */}
       </div>
     </nav>
   );
