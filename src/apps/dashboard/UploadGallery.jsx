@@ -1,10 +1,9 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "../sidebar/Button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -13,6 +12,21 @@ import { Label } from "@/components/ui/label";
 
 const UploadGallery = () => {
   const fileInput = useRef();
+  const [images, setImages] = useState([]);
+
+  const fetchImages = async () => {
+      try {
+        const response = await fetch("https://palegoldenrod-trout-734294.hostingersite.com/api/gallery/get");
+        const data = await response.json();
+        setImages(data);
+      } catch (error) {
+        console.error("Failed to fetch images", error);
+      }
+    };
+  
+    useEffect(() => {
+      fetchImages();
+    }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -21,40 +35,33 @@ const UploadGallery = () => {
     const formData = new FormData();
     formData.append("image", file);
 
-    const response = await fetch("https://your-api-url.com", {
+    const response = await fetch("https://palegoldenrod-trout-734294.hostingersite.com/api/gallery/add", {
       method: "POST",
       body: formData,
     });
 
     if (response.ok) {
       console.log("Image uploaded successfully");
+      // Optionally, re-fetch images to update the list after upload
+      fetchImages();
     } else {
       console.error("Image upload failed");
     }
   };
 
-  const imageUrls = [
-    "https://via.placeholder.com/150",
-    "https://via.placeholder.com/150",
-    "https://via.placeholder.com/150",
-    "https://via.placeholder.com/150",
-    "https://via.placeholder.com/150",
-    "https://via.placeholder.com/150",
-  ];
-
   return (
     <div className="h-full">
-      <Card className='h-full overflow-auto'>
+      <Card className="h-full overflow-auto">
         <CardHeader>
           <CardTitle>Upload Image</CardTitle>
           <CardDescription>Select an image to upload</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
-            <div className=" flex gap-3 place-items-end-end">
+            <div className="flex gap-3 place-items-end-end">
               <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="picture">Choose picture</Label>
-                <Input id="picture" type="file" />
+                <Input id="picture" type="file" ref={fileInput} />
               </div>
               <div className="grid items-center gap-1.5">
                 <Label htmlFor="picture" className="text-white">
@@ -74,12 +81,12 @@ const UploadGallery = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-5">
-            {imageUrls.map((url, index) => (
+            {images.map((image) => (
               <img
-                key={index}
-                src={url}
-                alt={`placeholder ${index}`}
-                className="w-full h-48 object-cover rounded-md"
+                key={image.image_id}
+                src={image.image_url}
+                alt={`Uploaded ${image.image_id}`}
+                className="w-full h-48 object-contain rounded-md"
               />
             ))}
           </div>
