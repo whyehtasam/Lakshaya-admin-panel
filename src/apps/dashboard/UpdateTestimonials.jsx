@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -20,36 +20,90 @@ import {
 
 const UpdateTestimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
+
+  const fetchTestimonials = async () => {
+    try {
+      const response = await fetch(`${backend_url}/api/testimonials/get`);
+  
+      if (!response.ok) {
+        throw new Error("Failed to fetch testimonials");
+      }
+  
+      const data = await response.json();
+      setTestimonials(data);
+    } catch (error) {
+      console.error(error);
+      setError("Failed to fetch testimonials");
+    }
+  };
+  
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const testimonial = Object.fromEntries(formData.entries());
-    setTestimonials([...testimonials, testimonial]);
-    e.target.reset();
+  
+    // Log form data for debugging
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+  
+    try {
+      const response = await fetch(`${backend_url}/api/testimonials/add`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Response error:", errorText);
+        throw new Error("Failed to add testimonial");
+      }
+  
+      // Fetch testimonials again after successful POST request
+      fetchTestimonials();
+      e.target.reset();
+      setError(null);
+    } catch (error) {
+      console.error(error);
+      setError("Failed to add testimonial");
+    }
   };
+  
 
   return (
     <div className="h-full">
-    <Card className='h-full overflow-auto'>
+      <Card className="h-full overflow-auto">
         <CardHeader>
           <CardTitle>Update Testimonials</CardTitle>
           <CardDescription>Enter the testimonials details</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="gap-3 grid sm:grid-cols-2">
-            <Input name="name" placeholder="Name" />
-            <Input name="designation" placeholder="Designation" />
-            <Input name="description" placeholder="Description" />
-            <Input name="img" type="file" placeholder="Image" />
-            <Button type="submit" className='w-fit'>Submit</Button>
+            <Input name="name" placeholder="Title" required />
+            <Input name="designation" placeholder="Designation" required />
+            <Input name="description" placeholder="Description" required />
+            <Input name="image" type="file" placeholder="Image" required />
+            <Button type="submit" className="w-fit">
+              Submit
+            </Button>
           </form>
+          {error && <p className="text-red-500">{error}</p>}
         </CardContent>
         <CardFooter>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
+                <TableHead>Title</TableHead>
                 <TableHead>Designation</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Image</TableHead>
@@ -60,16 +114,26 @@ const UpdateTestimonials = () => {
                 testimonials.map((testimonial, index) => (
                   <TableRow key={index}>
                     <TableCell>{testimonial.name}</TableCell>
-                    <TableCell>{testimonial.designation}</TableCell>
-                    <TableCell>{testimonial.description}</TableCell>
+                    <TableCell>{testimonial.Designation}</TableCell>
+                    <TableCell>{testimonial.Description}</TableCell>
                     <TableCell>
-                      <img src={URL.createObjectURL(testimonial.img)} alt={testimonial.name} width='50' height='50' />
+                      <img
+                        src={testimonial.image_url}
+                        alt={testimonial.title}
+                        width="50"
+                        height="50"
+                      />
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className='text-sm text-muted-foreground text-center'>No testimonials found</TableCell>
+                  <TableCell
+                    colSpan={4}
+                    className="text-sm text-muted-foreground text-center"
+                  >
+                    No testimonials found
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
