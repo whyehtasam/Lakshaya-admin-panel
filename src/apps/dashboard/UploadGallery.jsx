@@ -14,19 +14,22 @@ const UploadGallery = () => {
   const fileInput = useRef();
   const [images, setImages] = useState([]);
 
-  const fetchImages = async () => {
-      try {
-        const response = await fetch("https://palegoldenrod-trout-734294.hostingersite.com/api/gallery/get");
-        const data = await response.json();
-        setImages(data);
-      } catch (error) {
-        console.error("Failed to fetch images", error);
-      }
-    };
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
+  const token = localStorage.getItem("token");
   
-    useEffect(() => {
-      fetchImages();
-    }, []);
+  const fetchImages = async () => {
+    try {
+      const response = await fetch(backend_url + "/api/gallery/get");
+      const data = await response.json();
+      setImages(data);
+    } catch (error) {
+      console.error("Failed to fetch images", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchImages();
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -35,8 +38,11 @@ const UploadGallery = () => {
     const formData = new FormData();
     formData.append("image", file);
 
-    const response = await fetch("https://palegoldenrod-trout-734294.hostingersite.com/api/gallery/add", {
+    const response = await fetch(backend_url + "/api/gallery/add", {
       method: "POST",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
       body: formData,
     });
 
