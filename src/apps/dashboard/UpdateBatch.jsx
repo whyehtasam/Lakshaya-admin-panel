@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -17,6 +17,8 @@ import {
   TableRow,
   TableHeader,
 } from "@/components/ui/table";
+import Button from "../sidebar/Button";
+import { toast,Toaster } from "sonner";
 
 const UpdateBatch = () => {
   const [batches, setBatches] = useState([]);
@@ -73,6 +75,9 @@ const UpdateBatch = () => {
       .then((response) => {
         if (response.ok) {
           console.log("Batch added successfully");
+          toast.success("Announcement updated successfully!",{
+            duration: 3000,
+          })
           fetchBatches(); // Fetch batches immediately after submission
         } else {
           console.error("Batch addition failed");
@@ -102,6 +107,7 @@ const UpdateBatch = () => {
             <Input name="targetYear" value={batchData.targetYear} onChange={handleChange} placeholder="Year" />
             <Input name="fee" value={batchData.fee} onChange={handleChange} placeholder="Fee" />
             <Button type="submit" className="w-fit">Submit</Button>
+            <Toaster richColors />
           </form>
         </CardContent>
         <CardFooter>

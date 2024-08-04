@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import {
   Card,
   CardContent,
@@ -8,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -17,6 +18,8 @@ import {
   TableRow,
   TableHeader,
 } from "@/components/ui/table";
+import Button from "../sidebar/Button";
+import { toast,Toaster } from "sonner";
 
 const UpdateTestimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
@@ -70,6 +73,9 @@ const UpdateTestimonials = () => {
       }
   
       // Fetch testimonials again after successful POST request
+      toast.success("Testimonial uploaded successfully!", {
+        duration: 3000,
+      });
       fetchTestimonials();
       e.target.reset();
       setError(null);
@@ -93,11 +99,12 @@ const UpdateTestimonials = () => {
             <Input name="designation" placeholder="Designation" required />
             <Input name="description" placeholder="Description" required />
             <Input name="image" type="file" placeholder="Image" required />
+            <Toaster richColors/>
             <Button type="submit" className="w-fit">
               Submit
             </Button>
           </form>
-          {error && <p className="text-red-500">{error}</p>}
+          {/* {error && <p className="text-red-500">{error}</p>} */}
         </CardContent>
         <CardFooter>
           <Table>

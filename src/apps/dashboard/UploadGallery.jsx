@@ -9,14 +9,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast, Toaster } from "sonner";
 
 const UploadGallery = () => {
   const fileInput = useRef();
   const [images, setImages] = useState([]);
-
   const backend_url = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
-  
+
   const fetchImages = async () => {
     try {
       const response = await fetch(backend_url + "/api/gallery/get");
@@ -48,10 +48,17 @@ const UploadGallery = () => {
 
     if (response.ok) {
       console.log("Image uploaded successfully");
+      toast.success("Image uploaded successfully!", {
+        duration: 3000,
+      });
       // Optionally, re-fetch images to update the list after upload
       fetchImages();
+      event.target.reset();
     } else {
       console.error("Image upload failed");
+      toast.error("Image upload failed!", {
+        duration: 3000,
+      });
     }
   };
 
@@ -73,6 +80,7 @@ const UploadGallery = () => {
                 <Label htmlFor="picture" className="text-white">
                   hb
                 </Label>
+                <Toaster richColors />
                 <Button type="submit" className="">
                   Upload
                 </Button>
@@ -86,13 +94,13 @@ const UploadGallery = () => {
           <CardDescription>Select any image to modify</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-5">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5">
             {images.map((image) => (
               <img
                 key={image.image_id}
                 src={image.image_url}
                 alt={`Uploaded ${image.image_id}`}
-                className="w-full h-48 object-contain rounded-md"
+                className="object-contain w-full h-48 rounded-md"
               />
             ))}
           </div>

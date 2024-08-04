@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
+import Button from "../sidebar/Button";
 import { Input } from "@/components/ui/input";
 import {
   Accordion,
@@ -16,6 +17,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { toast,Toaster } from "sonner";
+
 
 const UpdateAnnouncement = () => {
   const titleInput = useRef(null);
@@ -58,6 +61,9 @@ const UpdateAnnouncement = () => {
 
     if (response.ok) {
       console.log("Announcement updated successfully");
+      toast.success("Announcement updated successfully!",{
+        duration: 3000,
+      })
       if (cardHeader.current) cardHeader.current.textContent = "Announcement updated successfully";
       titleInput.current.value = "";
       descriptionInput.current.value = "";
@@ -81,6 +87,7 @@ const UpdateAnnouncement = () => {
             <Input ref={titleInput} placeholder="Notice Title" />
             <Textarea ref={descriptionInput} placeholder="Notice Description" />
             <Button type="submit">Update</Button>
+            <Toaster richColors />
           </form>
         </CardContent>
         <CardFooter className="flex-col items-start space-y-2 mt-5">

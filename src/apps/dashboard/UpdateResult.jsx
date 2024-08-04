@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -17,6 +17,8 @@ import {
   TableRow,
   TableHeader,
 } from "@/components/ui/table";
+import Button from "../sidebar/Button";
+import { toast, Toaster } from "sonner";
 
 const UpdateResult = () => {
   const [formData, setFormData] = useState({
@@ -76,6 +78,9 @@ const UpdateResult = () => {
       .then((response) => {
         if (response.ok) {
           console.log("Result updated successfully");
+          toast.success("Announcement updated successfully!",{
+            duration: 3000,
+          })
           fetchResults(); // Fetch results immediately after submission
         } else {
           console.error("Result update failed");
@@ -141,6 +146,7 @@ const UpdateResult = () => {
             <Button type="submit" className="w-fit">
               Update
             </Button>
+            <Toaster richColors />
           </form>
         </CardContent>
         <CardFooter className="flex-col items-start space-y-2 mt-5">
