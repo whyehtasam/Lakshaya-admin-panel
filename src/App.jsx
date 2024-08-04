@@ -12,43 +12,44 @@ import {
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const backend_url = import.meta.env.VITE_BACKEND_URL;
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (!authenticated) {
-      fetch(backend_url + '/api/admin/authenticate', {
+      fetch(backend_url + "/api/admin/authenticate", {
         headers: {
-          'Authorization': `Bearer ${token}`,
-        }
-      }).then((res) => res.json()).then(data => {
-        setAuthenticated(true);
-      }).catch(e => console.log(e))
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setAuthenticated(true);
+        })
+        .catch((e) => console.log(e));
     }
   }, []);
 
-
   useEffect(() => {
-    console.log(authenticated)
-  }, [authenticated])
+    console.log(authenticated);
+  }, [authenticated]);
 
   return (
     <>
-      <Navbar />
+      <Router>
+        <Navbar />
 
-      {
-        !authenticated ?
+        {!authenticated ? (
           <div className="h-[90vh] flex justify-center items-center">
             <LoginForm />
-          </div> :
-        <div className="flex bg-slate-50 h-[calc(92.2vh)]">
-          <Router>
+          </div>
+        ) : (
+          <div className="flex bg-slate-50 h-[calc(92.2vh)]">
             <Sidebar className="h-full hidden sm:grid" />
 
             <Dashboard className="h-full" />
-          </Router>
-
-        </div>
-      }
+          </div>
+        )}
+      </Router>
     </>
   );
 }
