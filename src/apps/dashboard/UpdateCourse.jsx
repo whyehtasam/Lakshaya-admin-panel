@@ -114,7 +114,11 @@ const UpdateCourse = () => {
             <Toaster richColors />
           </form>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex-col items-start space-y-2 mt-5">
+          <CardTitle>Course Details</CardTitle>
+          <CardDescription>
+            View the course details below
+          </CardDescription>
           <Table>
             <TableHeader>
               <TableRow>

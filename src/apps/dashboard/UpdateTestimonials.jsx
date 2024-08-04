@@ -19,7 +19,7 @@ import {
   TableHeader,
 } from "@/components/ui/table";
 import Button from "../sidebar/Button";
-import { toast,Toaster } from "sonner";
+import { toast, Toaster } from "sonner";
 
 const UpdateTestimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
@@ -30,11 +30,11 @@ const UpdateTestimonials = () => {
   const fetchTestimonials = async () => {
     try {
       const response = await fetch(`${backend_url}/api/testimonials/get`);
-  
+
       if (!response.ok) {
         throw new Error("Failed to fetch testimonials");
       }
-  
+
       const data = await response.json();
       setTestimonials(data);
     } catch (error) {
@@ -42,21 +42,20 @@ const UpdateTestimonials = () => {
       setError("Failed to fetch testimonials");
     }
   };
-  
+
   useEffect(() => {
     fetchTestimonials();
   }, []);
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-  
+
     // Log form data for debugging
     for (let [key, value] of formData.entries()) {
       console.log(`${key}: ${value}`);
     }
-  
+
     try {
       const response = await fetch(`${backend_url}/api/testimonials/add`, {
         method: "POST",
@@ -65,13 +64,13 @@ const UpdateTestimonials = () => {
         },
         body: formData,
       });
-  
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Response error:", errorText);
         throw new Error("Failed to add testimonial");
       }
-  
+
       // Fetch testimonials again after successful POST request
       toast.success("Testimonial uploaded successfully!", {
         duration: 3000,
@@ -84,7 +83,6 @@ const UpdateTestimonials = () => {
       setError("Failed to add testimonial");
     }
   };
-  
 
   return (
     <div className="h-full">
@@ -99,14 +97,18 @@ const UpdateTestimonials = () => {
             <Input name="designation" placeholder="Designation" required />
             <Input name="description" placeholder="Description" required />
             <Input name="image" type="file" placeholder="Image" required />
-            <Toaster richColors/>
+            <Toaster richColors />
             <Button type="submit" className="w-fit">
               Submit
             </Button>
           </form>
           {/* {error && <p className="text-red-500">{error}</p>} */}
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex-col items-start space-y-2 mt-5">
+          <CardTitle>Testimonials Details</CardTitle>
+          <CardDescription>
+            View the testimonials details below
+          </CardDescription>
           <Table>
             <TableHeader>
               <TableRow>

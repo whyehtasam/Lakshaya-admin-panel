@@ -110,7 +110,11 @@ const UpdateBatch = () => {
             <Toaster richColors />
           </form>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex-col items-start space-y-2 mt-5">
+          <CardTitle>Batch Details</CardTitle>
+          <CardDescription>
+            View batch details for a specific batch 
+          </CardDescription>
           <Table>
             <TableHeader>
               <TableRow>
