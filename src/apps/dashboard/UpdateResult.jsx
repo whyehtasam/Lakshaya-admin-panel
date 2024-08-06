@@ -78,7 +78,7 @@ const UpdateResult = () => {
       .then((response) => {
         if (response.ok) {
           console.log("Result updated successfully");
-          toast.success("Announcement updated successfully!",{
+          toast.success("Result updated successfully!",{
             duration: 3000,
           })
           fetchResults(); // Fetch results immediately after submission

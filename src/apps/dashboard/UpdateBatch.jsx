@@ -75,7 +75,7 @@ const UpdateBatch = () => {
       .then((response) => {
         if (response.ok) {
           console.log("Batch added successfully");
-          toast.success("Announcement updated successfully!",{
+          toast.success("Batch updated successfully!",{
             duration: 3000,
           })
           fetchBatches(); // Fetch batches immediately after submission
