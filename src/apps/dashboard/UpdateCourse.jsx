@@ -39,20 +39,30 @@ const UpdateCourse = () => {
     });
   };
 
+  const fetchCourseDetails = async () => {
+    try {
+      const backend_url = import.meta.env.VITE_BACKEND_URL;
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${backend_url}/api/course/get`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!res.ok) {
+        throw new Error('Failed to fetch course details');
+      }
+  
+      const data = await res.json();
+      setCourses(data);
+      setExpandedStates(new Array(data.length).fill(false));
+    } catch (error) {
+      console.error('Error fetching course details:', error);
+    }
+  };
+
   useEffect(() => {
-    const backend_url = import.meta.env.VITE_BACKEND_URL;
-    const token = localStorage.getItem("token");
-    fetch(backend_url + "/api/course/get", {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setCourses(data);
-        setExpandedStates(new Array(data.length).fill(false));
-      })
-      .catch((e) => console.log(e));
+    fetchCourseDetails();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -76,6 +86,7 @@ const UpdateCourse = () => {
     if (res.status == 200 || res.status == 201) {
       if (cardDesc.current)
         cardDesc.current.textContent = "course updated successfully";
+      fetchCourseDetails();
       toast.success("Course updated successfully!", {
         duration: 3000,
       });
