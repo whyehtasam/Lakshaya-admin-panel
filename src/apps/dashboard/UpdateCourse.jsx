@@ -19,6 +19,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import Button from "../sidebar/Button";
 import { toast, Toaster } from "sonner";
+import DialogDemo from "@/components/DialogButton";
 
 const UpdateCourse = () => {
   const [courses, setCourses] = useState([]);
@@ -48,16 +49,16 @@ const UpdateCourse = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       if (!res.ok) {
-        throw new Error('Failed to fetch course details');
+        throw new Error("Failed to fetch course details");
       }
-  
+
       const data = await res.json();
       setCourses(data);
       setExpandedStates(new Array(data.length).fill(false));
     } catch (error) {
-      console.error('Error fetching course details:', error);
+      console.error("Error fetching course details:", error);
     }
   };
 
@@ -92,6 +93,31 @@ const UpdateCourse = () => {
       });
     }
   };
+
+  const handleDelete = async (id) => {
+    const res = await fetch(backend_url + "/api/course/remove", {
+      method: "DELETE", // Assuming it's POST, change to DELETE if required.
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify({ id }), // Pass id in the request body as specified.
+    });
+
+    if (res.status === 200 || res.status === 201) {
+      fetchCourseDetails();
+      toast.success("Course deleted successfully!", {
+        duration: 3000,
+      });
+    } else {
+      toast.error("Failed to delete the course. Please try again.", {
+        duration: 3000,
+      });
+    }
+  };
+  useEffect(() => {
+    console.log(courses);
+  }, [courses]);
 
   return (
     <div className="h-full">
@@ -142,17 +168,20 @@ const UpdateCourse = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>S No</TableHead>
                 <TableHead>Course Name</TableHead>
                 <TableHead>Duration</TableHead>
                 <TableHead>Fee</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Syllabus</TableHead>
+                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {courses.length > 0 ? (
                 courses.map((course, index) => (
                   <TableRow key={index}>
+                    <TableCell className="align-top">{index + 1}</TableCell>
                     <TableCell className="align-top">
                       {course.course_name}
                     </TableCell>
@@ -175,6 +204,19 @@ const UpdateCourse = () => {
                           {expandedStates[index] ? "View Less" : "View More"}
                         </button>
                       </pre>
+                    </TableCell>
+                    <TableCell className="align-top">
+                      {/* <Button
+                        onClick={() => handleDelete(course.id)}
+                        className="py-1 px-2 text-xs"
+                        size="small"
+                        variant="destructive"
+                      >
+                        Delete
+                      </Button> */}
+                      <DialogDemo  onClick={() => handleDelete(course.id)}
+                        className=""
+                        variant="destructive"/>
                     </TableCell>
                   </TableRow>
                 ))
