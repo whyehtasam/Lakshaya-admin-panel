@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DrawerDemo  from "../sidebar/Drawer";
 import { BrowserRouter as Router } from 'react-router-dom';
-const Navbar = () => {
+const Navbar = ({handleLogout}) => {
   return (
     // <Router>
     <nav className="px-5 h-14 bg-slate-100 flex justify-between items-center">
@@ -10,7 +10,7 @@ const Navbar = () => {
         className="inline-flex items-center gap-2.5 text-2xl font-bold text-black md:text-3xl"
         aria-label="logo"
       >
-        <DrawerDemo/>
+        <DrawerDemo handleLogout={handleLogout}/>
         <svg
           width="95"
           height="94"

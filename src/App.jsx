@@ -29,14 +29,22 @@ function App() {
     }
   }, []);
 
+  
   useEffect(() => {
     console.log(authenticated);
   }, [authenticated]);
 
+const handleLogout = () => {
+  localStorage.removeItem("token");
+  setAuthenticated(false);
+  window.location.reload();
+
+}
+
   return (
     <>
       <Router>
-        <Navbar />
+        <Navbar handleLogout={handleLogout}/>
 
         {!authenticated ? (
           <div className="h-[90vh] flex justify-center items-center">
@@ -44,7 +52,7 @@ function App() {
           </div>
         ) : (
           <div className="flex bg-slate-50 h-[calc(92.2vh)]">
-            <Sidebar className="h-full hidden sm:grid" />
+            <Sidebar handleLogout={handleLogout} className="h-full hidden sm:grid" />
 
             <Dashboard className="h-full" />
           </div>

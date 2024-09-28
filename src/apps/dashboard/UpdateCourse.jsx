@@ -95,13 +95,13 @@ const UpdateCourse = () => {
   };
 
   const handleDelete = async (id) => {
-    const res = await fetch(backend_url + "/api/course/remove", {
+    const res = await fetch(backend_url + `/api/course/remove?id=${id}`, {
       method: "DELETE", // Assuming it's POST, change to DELETE if required.
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-      body: JSON.stringify({ id }), // Pass id in the request body as specified.
+      // body: JSON.stringify({ id }), // Pass id in the request body as specified.
     });
 
     if (res.status === 200 || res.status === 201) {
