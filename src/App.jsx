@@ -42,7 +42,7 @@ const handleLogout = () => {
 }
 
   return (
-    <>
+    
       <Router>
         <Navbar handleLogout={handleLogout} authenticated={authenticated}/>
 
@@ -58,7 +58,7 @@ const handleLogout = () => {
           </div>
         )}
       </Router>
-    </>
+    
   );
 }
 

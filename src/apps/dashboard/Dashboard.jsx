@@ -12,7 +12,7 @@ import PaymentDetails from "./PaymentDetails";
 const Dashboard = ({className}) => {
   
   return (
-    <div className={`dashboard w-full sm:basis-4/5 sm:py-5 sm:pr-5 p-0 ${className}`}>
+    <div className={`dashboard w-full overflow-hidden lg:overflow-auto sm:basis-4/5 sm:py-5 sm:pr-5 p-0 ${className}`}>
       <Routes>
         <Route path="/" element={<UploadGallery />} />
         <Route path="/updateAnnouncement" element={<UpdateAnnouncemenet/>} />
