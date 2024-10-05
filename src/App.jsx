@@ -44,7 +44,7 @@ const handleLogout = () => {
   return (
     <>
       <Router>
-        <Navbar handleLogout={handleLogout}/>
+        <Navbar handleLogout={handleLogout} authenticated={authenticated}/>
 
         {!authenticated ? (
           <div className="h-[90vh] flex justify-center items-center">
