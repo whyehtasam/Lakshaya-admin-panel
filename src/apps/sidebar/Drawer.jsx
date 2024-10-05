@@ -21,6 +21,8 @@ export default function SheetDemo({ handleLogout }) {
     { name: "Update Testimonials", path: "/updateTestimonials" },
     { name: "Update Batches", path: "/updateBatch" },
     { name: "Update Course Details", path: "/updateCourse" },
+    { name: "View Regeistered Students", path: "/resgisteredStudents" },
+    { name: "View Payment Details", path: "/paymentDetails" },
   ];
 
   return (

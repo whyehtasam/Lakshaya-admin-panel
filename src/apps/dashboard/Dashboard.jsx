@@ -6,6 +6,8 @@ import UpdateResult from "./UpdateResult";
 import UpdateTestimonials from "./UpdateTestimonials";
 import UpdateBatch from "./UpdateBatch";
 import UpdateCourse from "./UpdateCourse";
+import RegisteredStudents from "./RegisteredStudents";
+import PaymentDetails from "./PaymentDetails";
 
 const Dashboard = ({className}) => {
   
@@ -18,6 +20,8 @@ const Dashboard = ({className}) => {
         <Route path="/updateTestimonials" element={<UpdateTestimonials/>} />
         <Route path="/updateBatch" element={<UpdateBatch/>} />
         <Route path="/updateCourse" element={<UpdateCourse/>} />
+        <Route path="/resgisteredStudents" element={<RegisteredStudents/>} />
+        <Route path="/paymentDetails" element={<PaymentDetails/>} />
       </Routes>
     </div>
   );
