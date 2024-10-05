@@ -12,7 +12,7 @@ import {
 // import { Input } from "@/components/ui/input";
 // import { Label } from "@/components/ui/label";
 
-const DialogDemo = ({ ...props }) => {
+const DialogDemo = ({deleteFor, ...props }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -26,9 +26,9 @@ const DialogDemo = ({ ...props }) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Delete Courses</DialogTitle>
+          <DialogTitle>Delete {' ' + deleteFor}</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this course?
+            Are you sure you want to delete this {' ' + deleteFor}?
           </DialogDescription>
         </DialogHeader>
 

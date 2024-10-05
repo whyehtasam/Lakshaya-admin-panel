@@ -214,9 +214,12 @@ const UpdateCourse = () => {
                       >
                         Delete
                       </Button> */}
-                      <DialogDemo  onClick={() => handleDelete(course.id)}
+                      <DialogDemo
+                        deleteFor="course"
+                        onClick={() => handleDelete(course.id)}
                         className=""
-                        variant="destructive"/>
+                        variant="destructive"
+                      />
                     </TableCell>
                   </TableRow>
                 ))
