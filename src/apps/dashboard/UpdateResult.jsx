@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/table";
 import Button from "../sidebar/Button";
 import { toast, Toaster } from "sonner";
+import DialogDemo from "@/components/DialogButton";
 
 const UpdateResult = () => {
   const [formData, setFormData] = useState({
@@ -98,6 +99,30 @@ const UpdateResult = () => {
     });
   };
 
+
+  const handleDelete = async (id) => {
+    const res = await fetch(backend_url + `/api/result/remove?id=${id}`, {
+      method: "DELETE", // Assuming it's POST, change to DELETE if required.
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      // body: JSON.stringify({ id }), // Pass id in the request body as specified.
+    });
+
+    if (res.status === 200 || res.status === 201) {
+      fetchResults();
+      toast.success("Result deleted successfully!", {
+        duration: 3000,
+      });
+    } else {
+      toast.error("Failed to delete the result. Please try again.", {
+        duration: 3000,
+      });
+    }
+  };
+
+
   return (
     <div className="h-full">
       <Card className="h-full overflow-auto">
@@ -157,18 +182,21 @@ const UpdateResult = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>S No.</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Exam</TableHead>
                 <TableHead>Year</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Rank</TableHead>
                 <TableHead>Image</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {results.length > 0 ? (
                 results.map((result, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={result.id}>
+                    <TableCell>{index + 1}</TableCell>
                     <TableCell>{result.name}</TableCell>
                     <TableCell>{result.exam}</TableCell>
                     <TableCell>{result.exam_year}</TableCell>
@@ -182,6 +210,15 @@ const UpdateResult = () => {
                         height="50"
                       />
                     </TableCell>
+                    <TableCell className="">
+                      <DialogDemo
+                        deleteFor="course"
+                        onClick={() => handleDelete(result.id)}
+                        className=""
+                        variant="destructive"
+                      />
+                    </TableCell>
+
                   </TableRow>
                 ))
               ) : (
