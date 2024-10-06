@@ -115,7 +115,7 @@ const UpdateCourse = () => {
       });
     }
   };
-  
+
   useEffect(() => {
     console.log(courses);
   }, [courses]);
@@ -169,7 +169,7 @@ const UpdateCourse = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>S No</TableHead>
+                <TableHead>S No.</TableHead>
                 <TableHead>Course Name</TableHead>
                 <TableHead>Duration</TableHead>
                 <TableHead>Fee</TableHead>
@@ -206,15 +206,7 @@ const UpdateCourse = () => {
                         </button>
                       </pre>
                     </TableCell>
-                    <TableCell className="align-top">
-                      {/* <Button
-                        onClick={() => handleDelete(course.id)}
-                        className="py-1 px-2 text-xs"
-                        size="small"
-                        variant="destructive"
-                      >
-                        Delete
-                      </Button> */}
+                    <TableCell className="">
                       <DialogDemo
                         deleteFor="course"
                         onClick={() => handleDelete(course.id)}

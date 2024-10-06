@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/table";
 import Button from "../sidebar/Button";
 import { toast, Toaster } from "sonner";
+import DialogDemo from "@/components/DialogButton";
+
 
 const UpdateTestimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
@@ -84,6 +86,29 @@ const UpdateTestimonials = () => {
     }
   };
 
+
+  const handleDelete = async (id) => {
+    const res = await fetch(backend_url + `/api/testimonials/remove?id=${id}`, {
+      method: "DELETE", // Assuming it's POST, change to DELETE if required.
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      // body: JSON.stringify({ id }), // Pass id in the request body as specified.
+    });
+
+    if (res.status === 200 || res.status === 201) {
+      fetchTestimonials();
+      toast.success("Testimonial deleted successfully!", {
+        duration: 3000,
+      });
+    } else {
+      toast.error("Failed to delete the testimonials. Please try again.", {
+        duration: 3000,
+      });
+    }
+  };
+
   return (
     <div className="h-full">
       <Card className="h-full overflow-auto">
@@ -112,16 +137,19 @@ const UpdateTestimonials = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>S No.</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Designation</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Image</TableHead>
+                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {testimonials.length > 0 ? (
                 testimonials.map((testimonial, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={testimonial.id}>
+                    <TableCell>{index + 1}</TableCell>
                     <TableCell>{testimonial.name}</TableCell>
                     <TableCell>{testimonial.Designation}</TableCell>
                     <TableCell>{testimonial.Description}</TableCell>
@@ -133,12 +161,20 @@ const UpdateTestimonials = () => {
                         height="50"
                       />
                     </TableCell>
+                    <TableCell className="">
+                      <DialogDemo
+                        deleteFor="testimonial"
+                        onClick={() => handleDelete(testimonial.id)}
+                        className=""
+                        variant="destructive"
+                      />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={4}
+                    colSpan={6}
                     className="text-sm text-muted-foreground text-center"
                   >
                     No testimonials found

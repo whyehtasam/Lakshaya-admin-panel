@@ -64,11 +64,11 @@ const RegisteredStudents = () => {
 
     if (res.status === 200 || res.status === 201) {
       fetchRegisteredStudents();
-      toast.success("Course deleted successfully!", {
+      toast.success("Student data deleted successfully!", {
         duration: 3000,
       });
     } else {
-      toast.error("Failed to delete the course. Please try again.", {
+      toast.error("Failed to delete the student data. Please try again.", {
         duration: 3000,
       });
     }
@@ -122,7 +122,7 @@ const RegisteredStudents = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center">
+                    <TableCell colSpan={7} className="text-center text-muted-foreground">
                       No registered students found
                     </TableCell>
                   </TableRow>
