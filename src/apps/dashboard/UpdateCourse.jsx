@@ -115,6 +115,7 @@ const UpdateCourse = () => {
       });
     }
   };
+  
   useEffect(() => {
     console.log(courses);
   }, [courses]);

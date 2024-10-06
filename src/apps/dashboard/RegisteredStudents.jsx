@@ -22,14 +22,15 @@ const RegisteredStudents = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
+  const token = localStorage.getItem("token");
   useEffect(() => {
     fetchRegisteredStudents();
   }, []);
 
   const fetchRegisteredStudents = async () => {
     try {
-      const backend_url = import.meta.env.VITE_BACKEND_URL;
-      const token = localStorage.getItem("token");
+      
       const response = await fetch(`${backend_url}/api/registration/get`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -50,6 +51,29 @@ const RegisteredStudents = () => {
       toast.error("Failed to load registered students. Please try again.");
     }
   };
+
+  const handleDelete = async (id) => {
+    const res = await fetch(backend_url + `/api/registration/remove?id=${id}`, {
+      method: "DELETE", // Assuming it's POST, change to DELETE if required.
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      // body: JSON.stringify({ id }), // Pass id in the request body as specified.
+    });
+
+    if (res.status === 200 || res.status === 201) {
+      fetchRegisteredStudents();
+      toast.success("Course deleted successfully!", {
+        duration: 3000,
+      });
+    } else {
+      toast.error("Failed to delete the course. Please try again.", {
+        duration: 3000,
+      });
+    }
+  };
+  
 
   return (
     <div className="h-full">
@@ -89,7 +113,7 @@ const RegisteredStudents = () => {
                       <TableCell className="align-top">
                         <DialogDemo
                           deleteFor="registered student"
-                          onClick={""}
+                          onClick={() => handleDelete(student.id)}
                           className=""
                           variant="destructive"
                         />

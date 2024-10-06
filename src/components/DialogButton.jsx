@@ -14,7 +14,7 @@ import {
 
 const DialogDemo = ({deleteFor, ...props }) => {
   return (
-    <Dialog>
+    <Dialog className='rounded'>
       <DialogTrigger asChild>
         <Button
           variant="destructive"
@@ -24,7 +24,7 @@ const DialogDemo = ({deleteFor, ...props }) => {
           Delete
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[90vw] rounded sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Delete {' ' + deleteFor}</DialogTitle>
           <DialogDescription>
@@ -32,7 +32,7 @@ const DialogDemo = ({deleteFor, ...props }) => {
           </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter className="flex">
+        <DialogFooter className="grid gap-3 grid-cols-2 sm:gap-0">
           <DialogClose asChild>
             <Button type="button" variant="secondary">
               Close
