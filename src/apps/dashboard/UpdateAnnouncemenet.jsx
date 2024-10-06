@@ -17,27 +17,26 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { toast,Toaster } from "sonner";
-
+import { toast, Toaster } from "sonner";
+import DialogDemo from "@/components/DialogButton";
 
 const UpdateAnnouncement = () => {
   const titleInput = useRef(null);
   const descriptionInput = useRef(null);
   const cardHeader = useRef(null);
   const [accordionData, setAccordionData] = useState([]);
-  
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
+  const token = localStorage.getItem("token");
   const fetchAnnouncements = () => {
-    const backend_url = import.meta.env.VITE_BACKEND_URL;
-    const token = localStorage.getItem('token');
-    fetch(backend_url + '/api/announcement/get', {
+    fetch(backend_url + "/api/announcement/get", {
       headers: {
-        'Authorization': 'Bearer ' + token
-      }
+        Authorization: "Bearer " + token,
+      },
     })
-    .then(res => res.json())
-    .then(data => setAccordionData(data))
-    .catch(e => console.log(e));
-  }
+      .then((res) => res.json())
+      .then((data) => setAccordionData(data))
+      .catch((e) => console.log(e));
+  };
 
   useEffect(() => {
     fetchAnnouncements();
@@ -45,26 +44,27 @@ const UpdateAnnouncement = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const backend_url = import.meta.env.VITE_BACKEND_URL;
+
     const title = titleInput.current.value;
     const description = descriptionInput.current.value;
-    const token = localStorage.getItem('token');
-    
-    const response = await fetch(backend_url + '/api/announcement/add', {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(backend_url + "/api/announcement/add", {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
-        'Authorization': 'Bearer ' + token,
+        Authorization: "Bearer " + token,
       },
       body: JSON.stringify({ title, description }),
     });
 
     if (response.ok) {
       console.log("Announcement updated successfully");
-      toast.success("Announcement updated successfully!",{
+      toast.success("Announcement updated successfully!", {
         duration: 3000,
-      })
-      if (cardHeader.current) cardHeader.current.textContent = "Announcement updated successfully";
+      });
+      if (cardHeader.current)
+        cardHeader.current.textContent = "Announcement updated successfully";
       titleInput.current.value = "";
       descriptionInput.current.value = "";
       fetchAnnouncements(); // Fetch announcements immediately after submission
@@ -73,9 +73,31 @@ const UpdateAnnouncement = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    const res = await fetch(backend_url + `/api/announcement/remove?id=${id}`, {
+      method: "DELETE", // Assuming it's POST, change to DELETE if required.
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      // body: JSON.stringify({ id }), // Pass id in the request body as specified.
+    });
+
+    if (res.status === 200 || res.status === 201) {
+      fetchAnnouncements();
+      toast.success("Announcement deleted successfully!", {
+        duration: 3000,
+      });
+    } else {
+      toast.error("Failed to delete the announcement. Please try again.", {
+        duration: 3000,
+      });
+    }
+  };
+
   return (
     <div className="h-full">
-      <Card className='h-full overflow-auto'>
+      <Card className="h-full overflow-auto">
         <CardHeader>
           <CardTitle>Update Notice Announcement</CardTitle>
           <CardDescription ref={cardHeader}>
@@ -99,8 +121,20 @@ const UpdateAnnouncement = () => {
           <Accordion type="single" collapsible className="w-full">
             {accordionData.map((item, index) => (
               <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger>{item.title}</AccordionTrigger>
+                <AccordionTrigger >
+                  {item.title}
+                  
+                </AccordionTrigger>
                 <AccordionContent>{item.description}</AccordionContent>
+                <div className="mb-4">
+                   <DialogDemo
+                    deleteFor="course"
+                    onClick={() => handleDelete(item.id)}
+                    className=""
+                    variant="destructive"
+                  />
+                </div>
+               
               </AccordionItem>
             ))}
           </Accordion>
