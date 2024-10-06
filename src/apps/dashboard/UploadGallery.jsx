@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Trash2 } from "lucide-react";
 import Button from "../sidebar/Button";
 import {
   Card,
@@ -11,19 +12,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast, Toaster } from "sonner";
 
+const backend_url = import.meta.env.VITE_BACKEND_URL;
+const token = localStorage.getItem("token");
+
 const UploadGallery = () => {
-  const fileInput = useRef();
+  const fileInput = useRef(null);
   const [images, setImages] = useState([]);
-  const backend_url = import.meta.env.VITE_BACKEND_URL;
-  const token = localStorage.getItem("token");
 
   const fetchImages = async () => {
     try {
-      const response = await fetch(backend_url + "/api/gallery/get");
+      const response = await fetch(`${backend_url}/api/gallery/get`);
       const data = await response.json();
       setImages(data);
     } catch (error) {
       console.error("Failed to fetch images", error);
+      toast.error("Failed to fetch images. Please try again.");
     }
   };
 
@@ -34,31 +37,53 @@ const UploadGallery = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const file = fileInput.current.files[0];
-    const formData = new FormData();
-    formData.append("image", file);
+    if (fileInput.current && fileInput.current.files[0]) {
+      const file = fileInput.current.files[0];
+      const formData = new FormData();
+      formData.append("image", file);
 
-    const response = await fetch(backend_url + "/api/gallery/add", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-      body: formData,
-    });
+      try {
+        const response = await fetch(`${backend_url}/api/gallery/add`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
 
-    if (response.ok) {
-      console.log("Image uploaded successfully");
-      toast.success("Image uploaded successfully!", {
-        duration: 3000,
+        if (response.ok) {
+          toast.success("Image uploaded successfully!");
+          fetchImages();
+          event.target.reset();
+        } else {
+          throw new Error("Image upload failed");
+        }
+      } catch (error) {
+        console.error("Image upload failed", error);
+        toast.error("Image upload failed. Please try again.");
+      }
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`${backend_url}/api/gallery/remove?id=${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
-      // Optionally, re-fetch images to update the list after upload
-      fetchImages();
-      event.target.reset();
-    } else {
-      console.error("Image upload failed");
-      toast.error("Image upload failed!", {
-        duration: 3000,
-      });
+
+      if (response.ok) {
+        toast.success("Image deleted successfully!");
+        fetchImages();
+      } else {
+        throw new Error("Failed to delete the image");
+      }
+    } catch (error) {
+      console.error("Failed to delete the image", error);
+      toast.error("Failed to delete the image. Please try again.");
     }
   };
 
@@ -70,42 +95,47 @@ const UploadGallery = () => {
           <CardDescription>Select an image to upload</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
-            <div className="flex gap-3 place-items-end-end">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex flex-col sm:flex-row gap-3 items-end">
               <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="picture">Choose picture</Label>
                 <Input id="picture" type="file" ref={fileInput} />
               </div>
-              <div className="grid items-center gap-1.5">
-                <Label htmlFor="picture" className="text-white">
-                  hb
-                </Label>
-                <Toaster richColors />
-                <Button type="submit" className="">
-                  Upload
-                </Button>
-              </div>
+              <Button type="submit" className="w-full sm:w-auto">
+                Upload
+              </Button>
             </div>
           </form>
         </CardContent>
 
         <CardHeader>
           <CardTitle>All pictures</CardTitle>
-          <CardDescription>Select any image to modify</CardDescription>
+          <CardDescription>Hover over an image to delete</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5">
             {images.map((image) => (
-              <img
-                key={image.image_id}
-                src={image.image_url}
-                alt={`Uploaded ${image.image_id}`}
-                className="object-contain w-full h-48 rounded-md"
-              />
+              <div key={image.image_id} className="relative group">
+                <img
+                  src={image.image_url}
+                  alt={`Uploaded ${image.image_id}`}
+                  className="object-cover w-full h-48 rounded-md group-hover:object-contain transition-all duration-300"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <button
+                    onClick={() => handleDelete(image.image_id)}
+                    className="p-2 bg-red-500 rounded-full hover:bg-red-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75"
+                    aria-label="Delete image"
+                  >
+                    <Trash2 className="w-6 h-6 text-white" />
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         </CardContent>
       </Card>
+      <Toaster richColors />
     </div>
   );
 };

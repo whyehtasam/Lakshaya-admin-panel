@@ -75,7 +75,7 @@ const PaymentDetails = () => {
                   <TableHead>Year</TableHead>
                   <TableHead>Stream</TableHead>
                   <TableHead>Batch</TableHead>
-                  <TableHead>Actions</TableHead>
+                  {/* <TableHead>Actions</TableHead> */}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -91,14 +91,14 @@ const PaymentDetails = () => {
                       <TableCell>{payment.year}</TableCell>
                       <TableCell>{payment.stream}</TableCell>
                       <TableCell>{payment.batch}</TableCell>
-                      <TableCell className="align-top">
+                      {/* <TableCell className="align-top">
                         <DialogDemo
                           deleteFor="registered student"
                           onClick={""}
                           className=""
                           variant="destructive"
                         />
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   ))
                 ) : (
