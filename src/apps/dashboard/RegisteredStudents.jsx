@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { toast, Toaster } from "sonner";
 import DialogDemo from "@/components/DialogButton";
+
 const RegisteredStudents = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,13 +25,13 @@ const RegisteredStudents = () => {
 
   const backend_url = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
+  
   useEffect(() => {
     fetchRegisteredStudents();
   }, []);
 
   const fetchRegisteredStudents = async () => {
     try {
-      
       const response = await fetch(`${backend_url}/api/registration/get`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -52,28 +53,35 @@ const RegisteredStudents = () => {
     }
   };
 
+  const formatDate = (unixTimestamp) => {
+    const date = new Date(unixTimestamp * 1000);
+    return date.toLocaleDateString("en-GB", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   const handleDelete = async (id) => {
     const res = await fetch(backend_url + `/api/registration/remove?id=${id}`, {
-      method: "DELETE", // Assuming it's POST, change to DELETE if required.
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-      // body: JSON.stringify({ id }), // Pass id in the request body as specified.
     });
 
     if (res.status === 200 || res.status === 201) {
       fetchRegisteredStudents();
-      toast.success("Student data deleted successfully!", {
-        duration: 3000,
-      });
+      toast.success("Student data deleted successfully!", { duration: 3000 });
     } else {
       toast.error("Failed to delete the student data. Please try again.", {
         duration: 3000,
       });
     }
   };
-  
 
   return (
     <div className="h-full">
@@ -97,6 +105,7 @@ const RegisteredStudents = () => {
                   <TableHead>Class</TableHead>
                   <TableHead>Contact</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Date Registered</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -110,6 +119,7 @@ const RegisteredStudents = () => {
                       <TableCell>{student.class}</TableCell>
                       <TableCell>{student.contact}</TableCell>
                       <TableCell>{student.email}</TableCell>
+                      <TableCell>{formatDate(student.time)}</TableCell>
                       <TableCell className="align-top">
                         <DialogDemo
                           deleteFor="registered student"
@@ -122,7 +132,7 @@ const RegisteredStudents = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center text-muted-foreground">
+                    <TableCell colSpan={8} className="text-center text-muted-foreground">
                       No registered students found
                     </TableCell>
                   </TableRow>

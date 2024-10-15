@@ -27,15 +27,19 @@ const UpdateAnnouncement = () => {
   const [accordionData, setAccordionData] = useState([]);
   const backend_url = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
-  const fetchAnnouncements = () => {
-    fetch(backend_url + "/api/announcement/get", {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => setAccordionData(data))
-      .catch((e) => console.log(e));
+  const fetchAnnouncements = async () => {
+    try {
+      const response = await fetch(backend_url + "/api/announcement/get", {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      const data = await response.json();
+      setAccordionData(data);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   useEffect(() => {
