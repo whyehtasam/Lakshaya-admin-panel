@@ -15,6 +15,7 @@ import {
   TableRow,
   TableHeader,
 } from "@/components/ui/table";
+
 import { toast, Toaster } from "sonner";
 import DialogDemo from "@/components/DialogButton";
 
@@ -115,7 +116,7 @@ const RegisteredStudents = () => {
                     <TableRow key={index}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{student.name}</TableCell>
-                      <TableCell>{student.stream}</TableCell>
+                      <TableCell>{student.stream.toUpperCase()}</TableCell>
                       <TableCell>{student.class}</TableCell>
                       <TableCell>{student.contact}</TableCell>
                       <TableCell>{student.email}</TableCell>

@@ -16,6 +16,13 @@ import {
   TableRow,
   TableHeader,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Buttons from "../sidebar/Button";
 import { toast, Toaster } from "sonner";
 import DialogDemo from "@/components/DialogButton";
@@ -30,6 +37,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
 
 const UpdateBatch = () => {
   const [date, setDate] = useState(new Date());
@@ -76,8 +84,6 @@ const UpdateBatch = () => {
       target_year: batchData.targetYear,
       fee: batchData.fee,
     };
-
-    // console.log("Formatted date:", payload.start_date);
 
     fetch(backend_url + "/api/batches/add", {
       method: "POST",
@@ -146,12 +152,48 @@ const UpdateBatch = () => {
                 onChange={handleChange}
                 placeholder="Batch Name"
               />
-              <Input
+              <Select
                 name="class"
                 value={batchData.class}
-                onChange={handleChange}
-                placeholder="Class"
-              />
+                onValueChange={(value) =>
+                  handleChange({ target: { name: "class", value } })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Class" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Select Class</SelectLabel>
+                    <SelectItem value="V (Foundation)">
+                      V (Foundation)
+                    </SelectItem>
+                    <SelectItem value="VI (Foundation)">
+                      VI (Foundation)
+                    </SelectItem>
+                    <SelectItem value="VII (Foundation)">
+                      VII (Foundation)
+                    </SelectItem>
+                    <SelectItem value="VIII (Foundation)">
+                      VIII (Foundation)
+                    </SelectItem>
+                    <SelectItem value="IX (Foundation)">
+                      IX (Foundation)
+                    </SelectItem>
+                    <SelectItem value="X (Foundation)">
+                      X (Foundation)
+                    </SelectItem>
+                    <SelectItem value="XI (JEE)">XI (JEE)</SelectItem>
+                    <SelectItem value="XI (NEET)">XI (NEET)</SelectItem>
+                    <SelectItem value="XII (JEE)">XII (JEE)</SelectItem>
+                    <SelectItem value="XII (NEET)">XII (NEET)</SelectItem>
+                    <SelectItem value="Dropper (JEE)">Dropper (JEE)</SelectItem>
+                    <SelectItem value="Dropper (NEET)">
+                      Dropper (NEET)
+                    </SelectItem>{" "}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="gap-3 grid sm:grid-cols-3">
