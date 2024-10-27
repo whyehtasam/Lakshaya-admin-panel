@@ -21,13 +21,16 @@ const Sidebar = ({ className, handleLogout }) => {
       <div className="grid gap-3 content-start">
         {buttons.map((button, index) => (
           <Link to={button.path} key={index}>
-            <Button
-              variant={selectedButton === button.name ? "" : "outline"}
-              className="w-full mx-auto transition-all p-7 active:scale-95 shadow-sm"
+            <div
+              className={`w-full text-left  transition-all active:scale-95 p-2 rounded-md ${
+                selectedButton === button.name
+                  ? 'bg-secondary text-secondary-foreground text-base font-semibold'
+                  : ' hover:bg-accent hover:text-accent-foreground text-sm text-gray-600'
+              }`}
               onClick={() => setSelectedButton(button.name)}
             >
               {button.name}
-            </Button>
+            </div>
           </Link>
         ))}
       </div>

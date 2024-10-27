@@ -19,6 +19,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast, Toaster } from "sonner";
 import DialogDemo from "@/components/DialogButton";
+import { useFetch } from "../context/useFetch";
 
 const UpdateAnnouncement = () => {
   const titleInput = useRef(null);
@@ -27,6 +28,9 @@ const UpdateAnnouncement = () => {
   const [accordionData, setAccordionData] = useState([]);
   const backend_url = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
+
+  const {fetchedData} = useFetch("/api/announcement/get","GET");
+
   const fetchAnnouncements = async () => {
     try {
       const response = await fetch(backend_url + "/api/announcement/get", {
@@ -44,7 +48,8 @@ const UpdateAnnouncement = () => {
 
   useEffect(() => {
     fetchAnnouncements();
-  }, []);
+    console.log("Announcements fetched successfully from useFetch",fetchedData);
+  }, [fetchedData]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
