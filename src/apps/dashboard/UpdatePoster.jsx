@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast, Toaster } from "sonner";
-
+import DialogDemo from "@/components/DialogButton";
 const backend_url = import.meta.env.VITE_BACKEND_URL;
 const token = localStorage.getItem("token");
 
@@ -123,13 +123,13 @@ const UpdatePoster = () => {
                     className="object-cover w-full h-48 rounded-md group-hover:object-contain transition-all duration-300"
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <button
+                    
+                    <DialogDemo
+                      deleteFor="poster"
                       onClick={() => handleDelete(popup.image_id)}
-                      className="p-2 bg-red-500 rounded-full hover:bg-red-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75"
-                      aria-label="Delete popup image"
-                    >
-                      <Trash2 className="w-6 h-6 text-white" />
-                    </button>
+                      className=""
+                      variant="destructive"
+                  />
                   </div>
                 </div>
               ))}

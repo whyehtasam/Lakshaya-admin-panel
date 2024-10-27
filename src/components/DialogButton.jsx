@@ -12,23 +12,34 @@ import {
 // import { Input } from "@/components/ui/input";
 // import { Label } from "@/components/ui/label";
 
-const DialogDemo = ({deleteFor, ...props }) => {
+import { Trash2 } from "lucide-react";
+
+const DialogDemo = ({ deleteFor, ...props }) => {
   return (
-    <Dialog className='rounded'>
+    <Dialog className="rounded">
       <DialogTrigger asChild>
-        <Button
-          variant="destructive"
-          size="small"
-          className=" px-2 py-1 text-xs"
-        >
-          Delete
-        </Button>
+        {deleteFor === "poster" || deleteFor === "gallery" ? (
+          <button
+            className="p-2 bg-red-500 rounded-full hover:bg-red-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75"
+            aria-label="Delete image"
+          >
+            <Trash2 className="w-6 h-6 text-white" />
+          </button>
+        ) : (
+          <Button
+            variant="destructive"
+            size="small"
+            className=" px-2 py-1 text-xs"
+          >
+            Delete
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="w-[90vw] rounded sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Delete {' ' + deleteFor}</DialogTitle>
+          <DialogTitle>Delete {" " + deleteFor}</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this {' ' + deleteFor}?
+            Are you sure you want to delete this {" " + deleteFor}?
           </DialogDescription>
         </DialogHeader>
 
@@ -39,11 +50,10 @@ const DialogDemo = ({deleteFor, ...props }) => {
             </Button>
           </DialogClose>
           <DialogClose asChild>
-          <Button type="submit" {...props}>
-            Delete
-          </Button>
+            <Button type="submit" {...props}>
+              Delete
+            </Button>
           </DialogClose>
-
         </DialogFooter>
       </DialogContent>
     </Dialog>
