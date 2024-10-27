@@ -269,7 +269,7 @@ const UpdateBatch = () => {
                     <TableCell>{batch.fee}</TableCell>
                     <TableCell className="">
                       <DialogDemo
-                        deleteFor="course"
+                        deleteFor="batch"
                         onClick={() => handleDelete(batch.id)}
                         className=""
                         variant="destructive"

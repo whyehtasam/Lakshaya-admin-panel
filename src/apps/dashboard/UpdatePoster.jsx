@@ -1,4 +1,4 @@
-import  { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Trash2 } from "lucide-react";
 import Button from "../sidebar/Button";
 import {
@@ -15,23 +15,23 @@ import { toast, Toaster } from "sonner";
 const backend_url = import.meta.env.VITE_BACKEND_URL;
 const token = localStorage.getItem("token");
 
-const UploadGallery = () => {
+const UpdatePoster = () => {
   const fileInput = useRef(null);
-  const [images, setImages] = useState([]);
+  const [popups, setPopups] = useState([]);
 
-  const fetchImages = async () => {
+  const fetchPopups = async () => {
     try {
-      const response = await fetch(`${backend_url}/api/gallery/get`);
+      const response = await fetch(`${backend_url}/api/popup/get`);
       const data = await response.json();
-      setImages(data);
+      setPopups(data);
     } catch (error) {
-      console.error("Failed to fetch images", error);
-      toast.error("Failed to fetch images. Please try again.");
+      console.error("Failed to fetch popups", error);
+      toast.error("Failed to fetch popups. Please try again.");
     }
   };
 
   useEffect(() => {
-    fetchImages();
+    fetchPopups();
   }, []);
 
   const handleSubmit = async (event) => {
@@ -43,7 +43,7 @@ const UploadGallery = () => {
       formData.append("image", file);
 
       try {
-        const response = await fetch(`${backend_url}/api/gallery/add`, {
+        const response = await fetch(`${backend_url}/api/popup/add`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -52,22 +52,22 @@ const UploadGallery = () => {
         });
 
         if (response.ok) {
-          toast.success("Image uploaded successfully!");
-          fetchImages();
+          toast.success("Popup image uploaded successfully!");
+          fetchPopups();
           event.target.reset();
         } else {
-          throw new Error("Image upload failed");
+          throw new Error("Popup image upload failed");
         }
       } catch (error) {
-        console.error("Image upload failed", error);
-        toast.error("Image upload failed. Please try again.");
+        console.error("Popup image upload failed", error);
+        toast.error("Popup image upload failed. Please try again.");
       }
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`${backend_url}/api/gallery/remove?id=${id}`, {
+      const response = await fetch(`${backend_url}/api/popup/remove?id=${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -76,14 +76,14 @@ const UploadGallery = () => {
       });
 
       if (response.ok) {
-        toast.success("Image deleted successfully!");
-        fetchImages();
+        toast.success("Popup image deleted successfully!");
+        fetchPopups();
       } else {
-        throw new Error("Failed to delete the image");
+        throw new Error("Failed to delete the popup image");
       }
     } catch (error) {
-      console.error("Failed to delete the image", error);
-      toast.error("Failed to delete the image. Please try again.");
+      console.error("Failed to delete the popup image", error);
+      toast.error("Failed to delete the popup image. Please try again.");
     }
   };
 
@@ -91,8 +91,8 @@ const UploadGallery = () => {
     <div className="h-full">
       <Card className="h-full overflow-auto">
         <CardHeader>
-          <CardTitle>Upload Image</CardTitle>
-          <CardDescription>Select an image to upload</CardDescription>
+          <CardTitle>Upload Popup Image</CardTitle>
+          <CardDescription>Select an image to upload for the popup</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -109,24 +109,24 @@ const UploadGallery = () => {
         </CardContent>
 
         <CardHeader>
-          <CardTitle>All pictures</CardTitle>
+          <CardTitle>All popup images</CardTitle>
           <CardDescription>Hover over an image to delete</CardDescription>
         </CardHeader>
         <CardContent>
-          {images.length > 0 ? (
+          {popups.length > 0 ? (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5">
-              {images.map((image) => (
-                <div key={image.image_id} className="relative group">
+              {popups.map((popup) => (
+                <div key={popup.image_id} className="relative group">
                   <img
-                    src={image.image_url}
-                    alt={`Uploaded ${image.image_id}`}
+                    src={popup.image_url}
+                    alt={`Popup ${popup.image_id}`}
                     className="object-cover w-full h-48 rounded-md group-hover:object-contain transition-all duration-300"
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                     <button
-                      onClick={() => handleDelete(image.image_id)}
+                      onClick={() => handleDelete(popup.image_id)}
                       className="p-2 bg-red-500 rounded-full hover:bg-red-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75"
-                      aria-label="Delete image"
+                      aria-label="Delete popup image"
                     >
                       <Trash2 className="w-6 h-6 text-white" />
                     </button>
@@ -148,4 +148,4 @@ const UploadGallery = () => {
   );
 };
 
-export default UploadGallery;
+export default UpdatePoster;

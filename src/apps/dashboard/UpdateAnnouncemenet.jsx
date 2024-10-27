@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import  { useRef, useState, useEffect } from "react";
 // import { Button } from "@/components/ui/button";
 import Button from "../sidebar/Button";
 import { Input } from "@/components/ui/input";
@@ -137,7 +137,7 @@ const UpdateAnnouncement = () => {
                 <AccordionContent>{item.description}</AccordionContent>
                 <div className="mb-4">
                    <DialogDemo
-                    deleteFor="course"
+                    deleteFor="announcement"
                     onClick={() => handleDelete(item.id)}
                     className=""
                     variant="destructive"

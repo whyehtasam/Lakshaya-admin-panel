@@ -8,13 +8,15 @@ import UpdateBatch from "./UpdateBatch";
 import UpdateCourse from "./UpdateCourse";
 import RegisteredStudents from "./RegisteredStudents";
 import PaymentDetails from "./PaymentDetails";
-
+import UpdatePoster from "./UpdatePoster";
 const Dashboard = ({className}) => {
   
   return (
     <div className={`dashboard w-full overflow-hidden lg:overflow-auto sm:basis-4/5 sm:py-5 sm:pr-5 p-0 ${className}`}>
       <Routes>
-        <Route path="/" element={<UploadGallery />} />
+        <Route path="/" element={<UpdatePoster />} />
+        <Route path="/updateGallery" element={<UploadGallery />} />
+
         <Route path="/updateAnnouncement" element={<UpdateAnnouncemenet/>} />
         <Route path="/updateResult" element={<UpdateResult/>} />
         <Route path="/updateTestimonials" element={<UpdateTestimonials/>} />

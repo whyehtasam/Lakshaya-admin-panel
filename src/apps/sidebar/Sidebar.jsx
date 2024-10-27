@@ -3,10 +3,11 @@ import Button from "./Button";
 import { Link } from "react-router-dom";
 
 const Sidebar = ({ className, handleLogout }) => {
-  const [selectedButton, setSelectedButton] = useState("Update Gallery");
+  const [selectedButton, setSelectedButton] = useState("Update Poster");
 
   const buttons = [
-    { name: "Update Gallery", path: "/" },
+    { name: "Update Poster", path: "/" },
+    { name: "Update Gallery", path: "/updateGallery" },
     { name: "Update Announcement", path: "/updateAnnouncement" },
     { name: "Update Results", path: "/updateResult" },
     { name: "Update Testimonials", path: "/updateTestimonials" },

@@ -15,7 +15,8 @@ export default function SheetDemo({ handleLogout }) {
   const [selectedButton, setSelectedButton] = useState("Update Gallery");
 
   const buttons = [
-    { name: "Update Gallery", path: "/" },
+    { name: "Update Poster", path: "/" },
+    { name: "Update Gallery", path: "/updateGallery" },
     { name: "Update Announcement", path: "/updateAnnouncement" },
     { name: "Update Results", path: "/updateResult" },
     { name: "Update Testimonials", path: "/updateTestimonials" },

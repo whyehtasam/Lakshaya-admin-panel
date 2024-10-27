@@ -35,7 +35,7 @@ const DialogDemo = ({deleteFor, ...props }) => {
         <DialogFooter className="grid gap-3 grid-cols-2 sm:gap-0">
           <DialogClose asChild>
             <Button type="button" variant="secondary">
-              Close
+              Cancel
             </Button>
           </DialogClose>
           <DialogClose asChild>
