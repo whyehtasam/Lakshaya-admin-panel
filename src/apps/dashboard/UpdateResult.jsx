@@ -8,7 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-// import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -20,6 +19,12 @@ import {
 import Button from "../sidebar/Button";
 import { toast, Toaster } from "sonner";
 import DialogDemo from "@/components/DialogButton";
+import {
+  Dialog,
+  DialogHeader,
+  DialogTitle,
+  DialogContent,
+} from "@/components/ui/dialog";
 
 const UpdateResult = () => {
   const [formData, setFormData] = useState({
@@ -31,11 +36,20 @@ const UpdateResult = () => {
     img: "",
   });
   const [results, setResults] = useState([]);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [selectedResult, setSelectedResult] = useState({
+    id: "",
+    name: "",
+    description: "",
+    exam: "",
+    examYear: "",
+    rank: "",
+    img: "",
+  });
 
   const backend_url = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
 
-  // Function to fetch results from the API
   const fetchResults = () => {
     fetch(backend_url + "/api/result/get", {
       headers: {
@@ -43,11 +57,10 @@ const UpdateResult = () => {
       },
     })
       .then((res) => res.json())
-      .then((data) => setResults(data.reverse())) // Reverse the order to show latest first
+      .then((data) => setResults(data.reverse()))
       .catch((e) => console.log(e));
   };
 
-  // Fetch results on component mount
   useEffect(() => {
     fetchResults();
   }, []);
@@ -78,50 +91,72 @@ const UpdateResult = () => {
     })
       .then((response) => {
         if (response.ok) {
-          console.log("Result updated successfully");
-          toast.success("Result updated successfully!",{
-            duration: 3000,
-          })
-          fetchResults(); // Fetch results immediately after submission
-        } else {
-          console.error("Result update failed");
+          toast.success("Result added successfully!", { duration: 3000 });
+          fetchResults();
+          setFormData({
+            name: "",
+            description: "",
+            exam: "",
+            examYear: "",
+            rank: "",
+            img: "",
+          });
         }
       })
       .catch((e) => console.log(e));
-
-    setFormData({
-      name: "",
-      description: "",
-      exam: "",
-      examYear: "",
-      rank: "",
-      img: "",
-    });
   };
-
 
   const handleDelete = async (id) => {
     const res = await fetch(backend_url + `/api/result/remove?id=${id}`, {
-      method: "DELETE", // Assuming it's POST, change to DELETE if required.
+      method: "DELETE",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
+        Authorization: "Bearer " + token,
       },
-      // body: JSON.stringify({ id }), // Pass id in the request body as specified.
     });
 
-    if (res.status === 200 || res.status === 201) {
+    if (res.ok) {
+      toast.success("Result deleted successfully!", { duration: 3000 });
       fetchResults();
-      toast.success("Result deleted successfully!", {
-        duration: 3000,
-      });
-    } else {
-      toast.error("Failed to delete the result. Please try again.", {
-        duration: 3000,
-      });
     }
   };
 
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      name: selectedResult.name,
+      description: selectedResult.description,
+      exam: selectedResult.exam,
+      exam_year: selectedResult.examYear,
+      rank: selectedResult.rank,
+      image_url: selectedResult.img,
+    };
+
+    try {
+      const response = await fetch(
+        backend_url + `/api/result/update/${selectedResult.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (response.ok) {
+        toast.success("Result updated successfully!");
+        fetchResults();
+        setIsUpdateModalOpen(false);
+      } else {
+        toast.error("Failed to update result.");
+      }
+    } catch (error) {
+      console.error("Error updating result:", error);
+      toast.error("An error occurred while updating the result.");
+    }
+  };
 
   return (
     <div className="h-full">
@@ -137,41 +172,46 @@ const UpdateResult = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Name"
+              required
             />
             <Input
               name="description"
               value={formData.description}
               onChange={handleChange}
               placeholder="Description"
+              required
             />
             <Input
               name="exam"
               value={formData.exam}
               onChange={handleChange}
               placeholder="Exam"
+              required
             />
             <Input
               name="examYear"
               value={formData.examYear}
               onChange={handleChange}
               placeholder="Exam Year"
+              required
             />
             <Input
               name="rank"
               value={formData.rank}
               onChange={handleChange}
               placeholder="Rank"
+              required
             />
             <Input
               name="img"
               value={formData.img}
               onChange={handleChange}
               placeholder="Image URL"
+              required
             />
             <Button type="submit" className="w-fit">
-              Update
+              Add Result
             </Button>
-            <Toaster richColors />
           </form>
         </CardContent>
         <CardFooter className="flex-col items-start space-y-2 mt-5">
@@ -206,25 +246,42 @@ const UpdateResult = () => {
                       <img
                         src={result.image_url}
                         alt={result.name}
-                        width="50"
-                        height="50"
+                        className="h-15 w-15 rounded object-cover"
                       />
                     </TableCell>
-                    <TableCell className="">
+                    <TableCell className="space-x-2">
                       <DialogDemo
-                        deleteFor="course"
+                        deleteFor="result"
                         onClick={() => handleDelete(result.id)}
-                        className=""
                         variant="destructive"
                       />
                     </TableCell>
-
+                    <TableCell>
+                      <Button
+                        size="small"
+                        className="px-2 py-1 text-xs mb-4"
+                        onClick={() => {
+                          setSelectedResult({
+                            id: result.id,
+                            name: result.name,
+                            description: result.description,
+                            exam: result.exam,
+                            examYear: result.exam_year,
+                            rank: result.rank,
+                            img: result.image_url,
+                          });
+                          setIsUpdateModalOpen(true);
+                        }}
+                      >
+                        Update
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={6}
+                    colSpan={8}
                     className="text-sm text-muted-foreground text-center"
                   >
                     No results found
@@ -235,6 +292,83 @@ const UpdateResult = () => {
           </Table>
         </CardFooter>
       </Card>
+
+      {/* Update Result Dialog */}
+      <Dialog open={isUpdateModalOpen} onOpenChange={setIsUpdateModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Result</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleUpdate} className="gap-3 grid sm:grid-cols-2">
+            <Input
+              name="name"
+              value={selectedResult.name}
+              onChange={(e) =>
+                setSelectedResult({ ...selectedResult, name: e.target.value })
+              }
+              placeholder="Name"
+              required
+            />
+            <Input
+              name="description"
+              value={selectedResult.description}
+              onChange={(e) =>
+                setSelectedResult({
+                  ...selectedResult,
+                  description: e.target.value,
+                })
+              }
+              placeholder="Description"
+              required
+            />
+            <Input
+              name="exam"
+              value={selectedResult.exam}
+              onChange={(e) =>
+                setSelectedResult({ ...selectedResult, exam: e.target.value })
+              }
+              placeholder="Exam"
+              required
+            />
+            <Input
+              name="examYear"
+              value={selectedResult.examYear}
+              onChange={(e) =>
+                setSelectedResult({
+                  ...selectedResult,
+                  examYear: e.target.value,
+                })
+              }
+              placeholder="Exam Year"
+              required
+            />
+            <Input
+              name="rank"
+              value={selectedResult.rank}
+              onChange={(e) =>
+                setSelectedResult({ ...selectedResult, rank: e.target.value })
+              }
+              placeholder="Rank"
+              required
+            />
+            <Input
+              name="img"
+              value={selectedResult.img}
+              onChange={(e) =>
+                setSelectedResult({ ...selectedResult, img: e.target.value })
+              }
+              placeholder="Image URL"
+              required
+            />
+            <div className="sm:col-span-2">
+              <Button type="submit" className="w-full">
+                Save Changes
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+      <Toaster richColors />
     </div>
   );
 };
