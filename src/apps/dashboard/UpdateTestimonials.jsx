@@ -18,14 +18,23 @@ import {
   TableRow,
   TableHeader,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogHeader,
+  DialogTitle,
+  DialogContent,
+  DialogClose,
+} from "@/components/ui/dialog";
 import Button from "../sidebar/Button";
 import { toast, Toaster } from "sonner";
 import DialogDemo from "@/components/DialogButton";
-
+import { Description } from "@radix-ui/react-alert-dialog";
 
 const UpdateTestimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [error, setError] = useState(null);
+  const [isupdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [testimonialForUpdate, setTestimonialForUpdate] = useState({});
 
   const backend_url = import.meta.env.VITE_BACKEND_URL;
 
@@ -86,6 +95,44 @@ const UpdateTestimonials = () => {
     }
   };
 
+  const handleUpdate = async ({ event, id }) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+
+    // Log form data for debugging
+    for (let [key, value] of formData.entries()) {
+      console.log(value);
+    }
+
+    try {
+      const response = await fetch(
+        `${backend_url}/api/testimonials/update/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (res.status === 200 || res.status === 201) {
+        fetchTestimonials();
+        toast.success("Testimonial deleted successfully!", {
+          duration: 3000,
+        });
+      } else {
+        toast.error("Failed to delete the testimonials. Please try again.", {
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      setError("Failed to add testimonial");
+    } finally {
+      setIsUpdateModalOpen(false);
+    }
+  };
 
   const handleDelete = async (id) => {
     const res = await fetch(backend_url + `/api/testimonials/remove?id=${id}`, {
@@ -131,9 +178,7 @@ const UpdateTestimonials = () => {
         </CardContent>
         <CardFooter className="flex-col items-start space-y-2 mt-5">
           <CardTitle>Testimonials Details</CardTitle>
-          <CardDescription>
-            View the testimonials details below
-          </CardDescription>
+          <CardDescription>View the testimonials details below</CardDescription>
           <Table>
             <TableHeader>
               <TableRow>
@@ -169,6 +214,18 @@ const UpdateTestimonials = () => {
                         variant="destructive"
                       />
                     </TableCell>
+                    <TableCell className="">
+                      <Button
+                        size="small"
+                        className=" px-2 py-1 text-xs mb-4"
+                        onClick={() => {
+                          setIsUpdateModalOpen(true);
+                          setTestimonialForUpdate(testimonial);
+                        }}
+                      >
+                        Update
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -185,6 +242,84 @@ const UpdateTestimonials = () => {
           </Table>
         </CardFooter>
       </Card>
+
+      <Dialog open={isupdateModalOpen} onOpenChange={setIsUpdateModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update Announcement</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={(event) => handleUpdate({event, id: testimonialForUpdate.id})}
+            className="gap-3 grid sm:grid-cols-2"
+          >
+            <Input
+              name="name"
+              value={testimonialForUpdate.name}
+              onChange={(e) =>
+                setTestimonialForUpdate({
+                  ...testimonialForUpdate,
+                  name: e.target.value,
+                })
+              }
+              placeholder="Name"
+              required
+            />
+            <Input
+              name="designation"
+              value={testimonialForUpdate.Designation}
+              onChange={(e) =>
+                setTestimonialForUpdate({
+                  ...testimonialForUpdate,
+                  Designation: e.target.value,
+                })
+              }
+              placeholder="Designation"
+              required
+            />
+            <Input
+              name="description"
+              value={testimonialForUpdate.Description}
+              onChange={(e) =>
+                setTestimonialForUpdate({
+                  ...testimonialForUpdate,
+                  Description: e.target.value,
+                })
+              }
+              placeholder="Description"
+              required
+            />
+            <div className="flex gap-2">
+              {testimonialForUpdate.image ? (
+                <div className="w-12 h-12">
+                  <img src={URL.createObjectURL(testimonialForUpdate.image)} />
+                </div>
+              ) : (
+                <div className="w-12 h-12">
+                  <img src={testimonialForUpdate.image_url} />
+                </div>
+              )}
+              <Input
+                name="image"
+                type="file"
+                accept="image/*"
+                placeholder="Image"
+                onChange={(e) => {
+                  console.log(e.target.files[0]);
+                  console.log(URL.createObjectURL(e.target.files[0]));
+                  setTestimonialForUpdate({
+                    ...testimonialForUpdate,
+                    image: e.target.files[0],
+                  });
+                }}
+              />
+            </div>
+            <Toaster richColors />
+            <Button type="submit" className="w-fit">
+              Submit
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
