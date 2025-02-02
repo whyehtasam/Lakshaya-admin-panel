@@ -1,4 +1,4 @@
-import  { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 // import { Button } from "@/components/ui/button";
 import Button from "../sidebar/Button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogHeader,
+  DialogTitle,
+  DialogContent,
+  DialogClose
+} from "@/components/ui/dialog";
+
 import { Textarea } from "@/components/ui/textarea";
 import { toast, Toaster } from "sonner";
 import DialogDemo from "@/components/DialogButton";
@@ -28,8 +36,10 @@ const UpdateAnnouncement = () => {
   const [accordionData, setAccordionData] = useState([]);
   const backend_url = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
+  const [isupdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [announcementForUpdate, setAnnouncementForUpdate] = useState({});
 
-  const {fetchedData} = useFetch("/api/announcement/get","GET");
+  const { fetchedData } = useFetch("/api/announcement/get", "GET");
 
   const fetchAnnouncements = async () => {
     try {
@@ -48,7 +58,10 @@ const UpdateAnnouncement = () => {
 
   useEffect(() => {
     fetchAnnouncements();
-    console.log("Announcements fetched successfully from useFetch",fetchedData);
+    console.log(
+      "Announcements fetched successfully from useFetch",
+      fetchedData
+    );
   }, [fetchedData]);
 
   const handleSubmit = async (event) => {
@@ -104,6 +117,33 @@ const UpdateAnnouncement = () => {
     }
   };
 
+  const handleUpdate = async ({event, id, title, description}) => {
+    event.preventDefault();
+    console.log(id)
+    console.log(title)
+    console.log(description)
+    if(!id || !title || !description) return;
+    const res = await fetch(backend_url + `/api/announcement/update/${id}`, {
+      method: "PUT", 
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify({ title,  description}),
+    });
+
+    if (res.status === 200 || res.status === 201) {
+      fetchAnnouncements();
+      toast.success("Announcement updated successfully!", {
+        duration: 3000,
+      });
+    } else {
+      toast.error("Failed to udpate the announcement. Please try again.", {
+        duration: 3000,
+      });
+    }
+  };
+
   return (
     <div className="h-full">
       <Card className="h-full overflow-auto">
@@ -130,25 +170,44 @@ const UpdateAnnouncement = () => {
           <Accordion type="single" collapsible className="w-full">
             {accordionData.map((item, index) => (
               <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger >
-                  {item.title}
-                  
-                </AccordionTrigger>
+                <AccordionTrigger>{item.title}</AccordionTrigger>
                 <AccordionContent>{item.description}</AccordionContent>
-                <div className="mb-4">
-                   <DialogDemo
+                <div className="mb-1">
+                  <DialogDemo
                     deleteFor="announcement"
                     onClick={() => handleDelete(item.id)}
                     className=""
                     variant="destructive"
                   />
                 </div>
-               
+                <Button
+                  size="small"
+                  className=" px-2 py-1 text-xs mb-4"
+                  onClick={() => {
+                    setIsUpdateModalOpen(true);
+                    setAnnouncementForUpdate(item);
+                  }}
+                >
+                  Update
+                </Button>
               </AccordionItem>
             ))}
           </Accordion>
         </CardFooter>
       </Card>
+
+      <Dialog open={isupdateModalOpen} onOpenChange={setIsUpdateModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update Announcement</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={(event)=>handleUpdate({event,...announcementForUpdate})} className=" space-y-3">
+            <Input onChange={(e)=>setAnnouncementForUpdate({...announcementForUpdate, title: e.target.value })} value={announcementForUpdate.title} placeholder="Notice Title" />
+            <Textarea onChange={(e)=> setAnnouncementForUpdate({...announcementForUpdate, description: e.target.value})} value={announcementForUpdate.description} placeholder="Notice Description" />
+            <Button type="submit">Update</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
