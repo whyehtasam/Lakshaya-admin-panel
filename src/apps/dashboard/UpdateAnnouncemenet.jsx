@@ -137,10 +137,12 @@ const UpdateAnnouncement = () => {
       toast.success("Announcement updated successfully!", {
         duration: 3000,
       });
+      setIsUpdateModalOpen(false);
     } else {
       toast.error("Failed to udpate the announcement. Please try again.", {
         duration: 3000,
       });
+      setIsUpdateModalOpen(false);
     }
   };
 
