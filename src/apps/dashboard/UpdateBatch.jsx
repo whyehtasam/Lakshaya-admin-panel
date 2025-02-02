@@ -7,6 +7,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogHeader,
+  DialogTitle,
+  DialogContent,
+  DialogClose
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -51,6 +58,8 @@ const UpdateBatch = () => {
 
   const backend_url = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
+  const [isupdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [batchForUpdate, setBatchForUpdate] = useState({});
 
   // Function to fetch batches from the API
   const fetchBatches = () => {
@@ -73,6 +82,8 @@ const UpdateBatch = () => {
     const { name, value } = e.target;
     setBatchData((prevData) => ({ ...prevData, [name]: value }));
   };
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -136,6 +147,33 @@ const UpdateBatch = () => {
     }
   };
 
+  const handleUpdate = async ({event, batchForUpdate}) => {
+    console.log(batchForUpdate);
+    event.preventDefault();
+    const res = await fetch(backend_url + `/api/batches/update/${batchForUpdate.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify(batchForUpdate)
+    });
+
+    if (res.status === 200 || res.status === 201) {
+      fetchBatches();
+      toast.success("Batch Updated successfully!", {
+        duration: 3000,
+      });
+      setIsUpdateModalOpen(false);
+    } else {
+      toast.error("Failed to update the batch. Please try again.", {
+        duration: 3000,
+      });
+      setIsUpdateModalOpen(false);
+    }
+  };
+
+    console.log(batchForUpdate)
   return (
     <div className="h-full">
       <Card className="h-full overflow-auto">
@@ -275,6 +313,18 @@ const UpdateBatch = () => {
                         variant="destructive"
                       />
                     </TableCell>
+                    <TableCell className="">
+                      <Button
+                        size="small"
+                        className=" px-2 py-1 text-xs mb-4"
+                        onClick={() => {
+                          setIsUpdateModalOpen(true);
+                          setBatchForUpdate(batch);
+                        }}
+                      >
+                        Update
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -291,6 +341,111 @@ const UpdateBatch = () => {
           </Table>
         </CardFooter>
       </Card>
+
+      <Dialog open={isupdateModalOpen} onOpenChange={setIsUpdateModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update Batch</DialogTitle>
+          </DialogHeader>
+          {
+            Object.keys(batchForUpdate).length > 0  && 
+          <form onSubmit={(event)=>handleUpdate({event,batchForUpdate})} className="space-y-3 ">
+            <div className="gap-3 grid sm:grid-cols-2">
+              <Input
+                name="batchName"
+                value={batchForUpdate["batch_name"]}
+                onChange={(e)=> setBatchForUpdate({...batchForUpdate, batch_name:e.target.value})}  
+                placeholder="Batch Name"
+              />
+              <Select
+                name="class"
+                value={batchForUpdate['class']}
+                onValueChange={(value) =>
+                  setBatchForUpdate({...batchForUpdate, class: value})
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Class" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Select Class</SelectLabel>
+                    <SelectItem value="V (Foundation)">
+                      V (Foundation)
+                    </SelectItem>
+                    <SelectItem value="VI (Foundation)">
+                      VI (Foundation)
+                    </SelectItem>
+                    <SelectItem value="VII (Foundation)">
+                      VII (Foundation)
+                    </SelectItem>
+                    <SelectItem value="VIII (Foundation)">
+                      VIII (Foundation)
+                    </SelectItem>
+                    <SelectItem value="IX (Foundation)">
+                      IX (Foundation)
+                    </SelectItem>
+                    <SelectItem value="X (Foundation)">
+                      X (Foundation)
+                    </SelectItem>
+                    <SelectItem value="XI (JEE)">XI (JEE)</SelectItem>
+                    <SelectItem value="XI (NEET)">XI (NEET)</SelectItem>
+                    <SelectItem value="XII (JEE)">XII (JEE)</SelectItem>
+                    <SelectItem value="XII (NEET)">XII (NEET)</SelectItem>
+                    <SelectItem value="Dropper (JEE)">Dropper (JEE)</SelectItem>
+                    <SelectItem value="Dropper (NEET)">
+                      Dropper (NEET)
+                    </SelectItem>{" "}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="gap-3 grid sm:grid-cols-3">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {batchForUpdate['start_date']}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={batchForUpdate['start_date']}
+                    onSelect={setDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+
+              <Input
+                name="targetYear"
+                value={batchForUpdate['target_year']}
+                onChange={(e)=> setBatchForUpdate({...batchForUpdate, target_year: e.target.value})}
+                placeholder="Year"
+              />
+              <Input
+                name="fee"
+                value={batchForUpdate.fee}
+                onChange={(e)=> setBatchForUpdate({...batchForUpdate, fee: e.target.value})}
+                placeholder="Fee"
+              />
+            </div>
+
+            <Buttons type="submit" className="w-fit">
+              Submit
+            </Buttons>
+          </form>
+          }
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
