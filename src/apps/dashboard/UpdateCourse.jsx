@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -20,17 +20,34 @@ import { Textarea } from "@/components/ui/textarea";
 import Button from "../sidebar/Button";
 import { toast, Toaster } from "sonner";
 import DialogDemo from "@/components/DialogButton";
+import {
+  Dialog,
+  DialogHeader,
+  DialogTitle,
+  DialogContent,
+} from "@/components/ui/dialog";
 
 const UpdateCourse = () => {
   const [courses, setCourses] = useState([]);
   const backend_url = import.meta.env.VITE_BACKEND_URL;
-  const [course_name, setCourseName] = useState("");
-  const [description, setDescription] = useState("");
-  const [duration, setDuration] = useState("");
-  const [fee, setFee] = useState("");
-  const [syllabus, setSyllabus] = useState("");
-  const cardDesc = useRef(null);
+  const [formData, setFormData] = useState({
+    course_name: "",
+    description: "",
+    duration: "",
+    fee: "",
+    syllabus: "",
+  });
+  const [selectedCourse, setSelectedCourse] = useState({
+    id: "",
+    course_name: "",
+    description: "",
+    duration: "",
+    fee: "",
+    syllabus: "",
+  });
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [expandedStates, setExpandedStates] = useState([]);
+  const cardDesc = useRef(null);
 
   const toggleSyllabus = (index) => {
     setExpandedStates((prevStates) => {
@@ -42,7 +59,6 @@ const UpdateCourse = () => {
 
   const fetchCourseDetails = async () => {
     try {
-      const backend_url = import.meta.env.VITE_BACKEND_URL;
       const token = localStorage.getItem("token");
       const res = await fetch(`${backend_url}/api/course/get`, {
         headers: {
@@ -50,9 +66,7 @@ const UpdateCourse = () => {
         },
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch course details");
-      }
+      if (!res.ok) throw new Error("Failed to fetch course details");
 
       const data = await res.json();
       setCourses(data);
@@ -68,104 +82,146 @@ const UpdateCourse = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const token = localStorage.getItem("token");
-    const res = await fetch(backend_url + "/api/course/add", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify({
-        course_name,
-        fee,
-        duration,
-        description,
-        syllabus,
-      }),
-    });
 
-    if (res.status == 200 || res.status == 201) {
-      if (cardDesc.current)
-        cardDesc.current.textContent = "course updated successfully";
-      fetchCourseDetails();
-      toast.success("Course updated successfully!", {
-        duration: 3000,
+    try {
+      const res = await fetch(backend_url + "/api/course/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify(formData),
       });
+
+      if (res.ok) {
+        toast.success("Course added successfully!", { duration: 3000 });
+        fetchCourseDetails();
+        setFormData({
+          course_name: "",
+          description: "",
+          duration: "",
+          fee: "",
+          syllabus: "",
+        });
+      }
+    } catch (error) {
+      console.error("Error adding course:", error);
     }
   };
 
   const handleDelete = async (id) => {
-    const res = await fetch(backend_url + `/api/course/remove?id=${id}`, {
-      method: "DELETE", // Assuming it's POST, change to DELETE if required.
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-      // body: JSON.stringify({ id }), // Pass id in the request body as specified.
-    });
+    try {
+      const res = await fetch(backend_url + `/api/course/remove?id=${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
 
-    if (res.status === 200 || res.status === 201) {
-      fetchCourseDetails();
-      toast.success("Course deleted successfully!", {
-        duration: 3000,
-      });
-    } else {
-      toast.error("Failed to delete the course. Please try again.", {
-        duration: 3000,
-      });
+      if (res.ok) {
+        toast.success("Course deleted successfully!", { duration: 3000 });
+        fetchCourseDetails();
+      }
+    } catch (error) {
+      console.error("Error deleting course:", error);
+      toast.error("Failed to delete course");
     }
   };
 
-  useEffect(() => {
-    console.log(courses);
-  }, [courses]);
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch(
+        backend_url + `/api/course/update/${selectedCourse.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify(selectedCourse),
+        }
+      );
+
+      if (res.ok) {
+        toast.success("Course updated successfully!", { duration: 3000 });
+        fetchCourseDetails();
+        setIsUpdateModalOpen(false);
+      }
+    } catch (error) {
+      console.error("Error updating course:", error);
+      toast.error("Failed to update course");
+    }
+  };
 
   return (
     <div className="h-full">
       <Card className="h-full overflow-auto">
         <CardHeader>
-          <CardTitle>Update Course Details</CardTitle>
+          <CardTitle>Course Management</CardTitle>
           <CardDescription ref={cardDesc}>
-            Enter the course details
+            Manage course details and information
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="gap-3 grid  sm:grid-cols-2">
+          <form onSubmit={handleSubmit} className="gap-3 grid sm:grid-cols-2">
             <Input
-              name="courseName"
+              name="course_name"
+              value={formData.course_name}
+              onChange={(e) =>
+                setFormData({ ...formData, course_name: e.target.value })
+              }
               placeholder="Course Name"
-              onChange={(e) => setCourseName(e.target.value)}
+              required
             />
             <Input
               name="duration"
+              value={formData.duration}
+              onChange={(e) =>
+                setFormData({ ...formData, duration: e.target.value })
+              }
               placeholder="Duration"
-              onChange={(e) => setDuration(e.target.value)}
+              required
             />
             <Input
               name="fee"
+              value={formData.fee}
+              onChange={(e) =>
+                setFormData({ ...formData, fee: e.target.value })
+              }
               placeholder="Fee"
-              onChange={(e) => setFee(e.target.value)}
+              required
             />
             <Input
               name="description"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               placeholder="Description"
-              onChange={(e) => setDescription(e.target.value)}
+              required
             />
             <Textarea
               className="sm:col-span-2"
               name="syllabus"
+              value={formData.syllabus}
+              onChange={(e) =>
+                setFormData({ ...formData, syllabus: e.target.value })
+              }
               placeholder="Syllabus"
-              onChange={(e) => setSyllabus(e.target.value)}
+              required
             />
             <Button type="submit" className="w-fit">
-              Submit
+              Add Course
             </Button>
-            <Toaster richColors />
           </form>
         </CardContent>
         <CardFooter className="flex-col items-start space-y-2 mt-5">
-          <CardTitle>Course Details</CardTitle>
-          <CardDescription>View the course details below</CardDescription>
+          <CardTitle>Course List</CardTitle>
+          <CardDescription>Current courses and their details</CardDescription>
           <Table>
             <TableHeader>
               <TableRow>
@@ -175,13 +231,13 @@ const UpdateCourse = () => {
                 <TableHead>Fee</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Syllabus</TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {courses.length > 0 ? (
                 courses.map((course, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={course.id}>
                     <TableCell className="align-top">{index + 1}</TableCell>
                     <TableCell className="align-top">
                       {course.course_name}
@@ -206,23 +262,41 @@ const UpdateCourse = () => {
                         </button>
                       </pre>
                     </TableCell>
-                    <TableCell className="">
+                    <TableCell className="space-x-2">
                       <DialogDemo
                         deleteFor="course"
                         onClick={() => handleDelete(course.id)}
-                        className=""
                         variant="destructive"
                       />
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        size="small"
+                        className="px-2 py-1 text-xs mb-4"
+                        onClick={() => {
+                          setSelectedCourse({
+                            id: course.id,
+                            course_name: course.course_name,
+                            duration: course.duration,
+                            fee: course.fee,
+                            description: course.description,
+                            syllabus: course.syllabus,
+                          });
+                          setIsUpdateModalOpen(true);
+                        }}
+                      >
+                        Update
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={5}
+                    colSpan={7}
                     className="text-sm text-muted-foreground text-center"
                   >
-                    No data found
+                    No courses found
                   </TableCell>
                 </TableRow>
               )}
@@ -230,6 +304,81 @@ const UpdateCourse = () => {
           </Table>
         </CardFooter>
       </Card>
+
+      {/* Update Course Dialog */}
+      <Dialog open={isUpdateModalOpen} onOpenChange={setIsUpdateModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Course</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleUpdate} className="gap-3 grid sm:grid-cols-2">
+            <Input
+              name="course_name"
+              value={selectedCourse.course_name}
+              onChange={(e) =>
+                setSelectedCourse({
+                  ...selectedCourse,
+                  course_name: e.target.value,
+                })
+              }
+              placeholder="Course Name"
+              required
+            />
+            <Input
+              name="duration"
+              value={selectedCourse.duration}
+              onChange={(e) =>
+                setSelectedCourse({
+                  ...selectedCourse,
+                  duration: e.target.value,
+                })
+              }
+              placeholder="Duration"
+              required
+            />
+            <Input
+              name="fee"
+              value={selectedCourse.fee}
+              onChange={(e) =>
+                setSelectedCourse({ ...selectedCourse, fee: e.target.value })
+              }
+              placeholder="Fee"
+              required
+            />
+            <Input
+              name="description"
+              value={selectedCourse.description}
+              onChange={(e) =>
+                setSelectedCourse({
+                  ...selectedCourse,
+                  description: e.target.value,
+                })
+              }
+              placeholder="Description"
+              required
+            />
+            <Textarea
+              className="sm:col-span-2"
+              name="syllabus"
+              value={selectedCourse.syllabus}
+              onChange={(e) =>
+                setSelectedCourse({
+                  ...selectedCourse,
+                  syllabus: e.target.value,
+                })
+              }
+              placeholder="Syllabus"
+              required
+            />
+            <div className="sm:col-span-2">
+              <Button type="submit" className="w-full">
+                Save Changes
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+      <Toaster richColors />
     </div>
   );
 };

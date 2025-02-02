@@ -246,7 +246,7 @@ const UpdateResult = () => {
                       <img
                         src={result.image_url}
                         alt={result.name}
-                        className="h-15 w-15 rounded object-cover"
+                        className="h-12 w-12 rounded object-cover object-top"
                       />
                     </TableCell>
                     <TableCell className="space-x-2">
